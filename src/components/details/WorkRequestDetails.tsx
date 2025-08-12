@@ -10,17 +10,17 @@ import Badge from "../ui/badge/Badge"
 interface WorkRequest {
     id: string;
     requestNumber: string;
-    equipmentId: string;
-    requestedBy: string;
-    description: string;
-    priority: "low" | "medium" | "high" | "urgent";
-    status: "pending" | "approved" | "in_progress" | "completed" | "cancelled";
-    requestDate: string;
-    requiredDate: string;
-    estimatedCost: number;
-    justification: string;
-    createdAt: string;
-    updatedAt: string;
+    requesterLastName: string;
+    requesterFirstName: string;
+    equipmentName: string;
+    failureType: string;
+    failureDescription: string;
+    workOrderAssigned: boolean;
+    reportCompleted: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+    equipmentId: string | null;
+    createdById: string | null;
 }
 
 interface WorkRequestDetailsProps {
@@ -38,11 +38,8 @@ export default function WorkRequestDetails({ workRequestId }: WorkRequestDetails
             if (success && data) {
                 setWorkRequest({
                     ...data,
-                    requestDate: data.requestDate.toString(),
-                    requiredDate: data.requiredDate.toString(),
-                    createdAt: data.createdAt.toString(),
-                    updatedAt: data.updatedAt.toString()
-                })
+                    workOrderAssigned: data.workOrderAssigned ?? false
+                } as WorkRequest)
             } else {
                 toast.error("Demande d'intervention non trouvée")
                 router.push("/interventions/requests")
@@ -82,30 +79,7 @@ export default function WorkRequestDetails({ workRequestId }: WorkRequestDetails
         })
     }
 
-    const formatDateOnly = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString('fr-FR')
-    }
 
-    const getPriorityColor = (priority: string) => {
-        switch (priority) {
-            case "low": return "success"
-            case "medium": return "warning"
-            case "high": return "error"
-            case "urgent": return "error"
-            default: return "default"
-        }
-    }
-
-    const getStatusColor = (status: string) => {
-        switch (status) {
-            case "pending": return "warning"
-            case "approved": return "info"
-            case "in_progress": return "warning"
-            case "completed": return "success"
-            case "cancelled": return "error"
-            default: return "default"
-        }
-    }
 
     return (
         <ComponentCard title={`Demande d'intervention: ${workRequest.requestNumber}`}>
@@ -142,93 +116,82 @@ export default function WorkRequestDetails({ workRequestId }: WorkRequestDetails
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Demandé par
                             </label>
-                            <p className="text-gray-600 dark:text-gray-400">{workRequest.requestedBy}</p>
+                            <p className="text-gray-600 dark:text-gray-400">{workRequest.requesterFirstName} {workRequest.requesterLastName}</p>
                         </div>
                         
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Priorité
+                                Type de panne
                             </label>
-                            <Badge size="sm" color={getPriorityColor(workRequest.priority)}>
-                                {workRequest.priority}
+                            <p className="text-gray-600 dark:text-gray-400">{workRequest.failureType}</p>
+                        </div>
+                        
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Ordre de travail assigné
+                            </label>
+                            <Badge size="sm" color={workRequest.workOrderAssigned ? "success" : "warning"}>
+                                {workRequest.workOrderAssigned ? "Oui" : "Non"}
                             </Badge>
                         </div>
                         
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Statut
+                                Rapport complété
                             </label>
-                            <Badge size="sm" color={getStatusColor(workRequest.status)}>
-                                {workRequest.status}
+                            <Badge size="sm" color={workRequest.reportCompleted ? "success" : "warning"}>
+                                {workRequest.reportCompleted ? "Oui" : "Non"}
                             </Badge>
-                        </div>
-                        
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Date de demande
-                            </label>
-                            <p className="text-gray-600 dark:text-gray-400">{formatDateOnly(workRequest.requestDate)}</p>
                         </div>
                     </div>
 
                     <div className="space-y-4">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Nom de l'équipement
+                            </label>
+                            <p className="text-gray-600 dark:text-gray-400">{workRequest.equipmentName}</p>
+                        </div>
+                        
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 ID Équipement
                             </label>
-                            <p className="text-gray-600 dark:text-gray-400">{workRequest.equipmentId}</p>
+                            <p className="text-gray-600 dark:text-gray-400">{workRequest.equipmentId || "Non spécifié"}</p>
                         </div>
                         
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Date requise
+                                Créé par
                             </label>
-                            <p className="text-gray-600 dark:text-gray-400">{formatDateOnly(workRequest.requiredDate)}</p>
-                        </div>
-                        
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Coût estimé
-                            </label>
-                            <p className="text-gray-600 dark:text-gray-400">{workRequest.estimatedCost.toLocaleString('fr-FR')} €</p>
+                            <p className="text-gray-600 dark:text-gray-400">{workRequest.createdById || "Non spécifié"}</p>
                         </div>
                         
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Créé le
                             </label>
-                            <p className="text-gray-600 dark:text-gray-400">{formatDate(workRequest.createdAt)}</p>
+                            <p className="text-gray-600 dark:text-gray-400">{formatDate(workRequest.createdAt.toString())}</p>
                         </div>
                         
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Modifié le
                             </label>
-                            <p className="text-gray-600 dark:text-gray-400">{formatDate(workRequest.updatedAt)}</p>
+                            <p className="text-gray-600 dark:text-gray-400">{formatDate(workRequest.updatedAt.toString())}</p>
                         </div>
                     </div>
                 </div>
 
-                {/* Informations détaillées */}
+                {/* Description de la panne */}
                 <div className="space-y-4">
                     <div>
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Description
+                            Description de la panne
                         </label>
                         <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
                             <p className="text-gray-600 dark:text-gray-400 whitespace-pre-wrap">
-                                {workRequest.description || "Aucune description spécifiée"}
-                            </p>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Justification
-                        </label>
-                        <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                            <p className="text-gray-600 dark:text-gray-400 whitespace-pre-wrap">
-                                {workRequest.justification || "Aucune justification spécifiée"}
+                                {workRequest.failureDescription || "Aucune description spécifiée"}
                             </p>
                         </div>
                     </div>

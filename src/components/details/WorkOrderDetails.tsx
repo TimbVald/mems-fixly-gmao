@@ -10,19 +10,15 @@ import Badge from "../ui/badge/Badge"
 interface WorkOrder {
     id: string;
     workOrderNumber: string;
-    workRequestId: string;
-    equipmentId: string;
-    assignedTo: string;
-    plannedStartDate: string;
-    plannedEndDate: string;
-    estimatedDuration: number;
-    priority: "low" | "medium" | "high" | "urgent";
-    status: "planned" | "in_progress" | "completed" | "cancelled";
-    workType: "corrective" | "preventive" | "improvement";
-    description: string;
-    instructions: string;
-    createdAt: string;
-    updatedAt: string;
+    workRequestNumber: string;
+    interventionType: string;
+    numberOfIntervenants: number;
+    interventionDateTime: Date;
+    approximateDuration: number | null;
+    stepsToFollow: string;
+    createdAt: Date;
+    updatedAt: Date;
+    createdById: string;
 }
 
 interface WorkOrderDetailsProps {
@@ -38,13 +34,7 @@ export default function WorkOrderDetails({ workOrderId }: WorkOrderDetailsProps)
         const loadWorkOrder = async () => {
             const { success, data } = await getWorkOrderById(workOrderId)
             if (success && data) {
-                setWorkOrder({
-                    ...data,
-                    plannedStartDate: data.plannedStartDate.toString(),
-                    plannedEndDate: data.plannedEndDate.toString(),
-                    createdAt: data.createdAt.toString(),
-                    updatedAt: data.updatedAt.toString()
-                })
+                setWorkOrder(data)
             } else {
                 toast.error("Ordre de travail non trouvé")
                 router.push("/interventions/work-orders")
@@ -84,38 +74,7 @@ export default function WorkOrderDetails({ workOrderId }: WorkOrderDetailsProps)
         })
     }
 
-    const formatDateOnly = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString('fr-FR')
-    }
 
-    const getPriorityColor = (priority: string) => {
-        switch (priority) {
-            case "low": return "success"
-            case "medium": return "warning"
-            case "high": return "error"
-            case "urgent": return "error"
-            default: return "default"
-        }
-    }
-
-    const getStatusColor = (status: string) => {
-        switch (status) {
-            case "planned": return "info"
-            case "in_progress": return "warning"
-            case "completed": return "success"
-            case "cancelled": return "error"
-            default: return "default"
-        }
-    }
-
-    const getWorkTypeColor = (workType: string) => {
-        switch (workType) {
-            case "corrective": return "error"
-            case "preventive": return "success"
-            case "improvement": return "info"
-            default: return "default"
-        }
-    }
 
     return (
         <ComponentCard title={`Ordre de travail: ${workOrder.workOrderNumber}`}>
@@ -150,111 +109,77 @@ export default function WorkOrderDetails({ workOrderId }: WorkOrderDetailsProps)
                         
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                ID Demande liée
+                                Numéro de demande liée
                             </label>
-                            <p className="text-gray-600 dark:text-gray-400">{workOrder.workRequestId}</p>
+                            <p className="text-gray-600 dark:text-gray-400">{workOrder.workRequestNumber}</p>
                         </div>
                         
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Assigné à
+                                Type d'intervention
                             </label>
-                            <p className="text-gray-600 dark:text-gray-400">{workOrder.assignedTo}</p>
-                        </div>
-                        
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Type de travail
-                            </label>
-                            <Badge size="sm" color={getWorkTypeColor(workOrder.workType)}>
-                                {workOrder.workType}
+                            <Badge size="sm" color={workOrder.interventionType === 'préventive' ? 'success' : 'warning'}>
+                                {workOrder.interventionType}
                             </Badge>
                         </div>
                         
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Priorité
+                                Nombre d'intervenants
                             </label>
-                            <Badge size="sm" color={getPriorityColor(workOrder.priority)}>
-                                {workOrder.priority}
-                            </Badge>
+                            <p className="text-gray-600 dark:text-gray-400">{workOrder.numberOfIntervenants}</p>
                         </div>
                         
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Statut
+                                Date et heure d'intervention
                             </label>
-                            <Badge size="sm" color={getStatusColor(workOrder.status)}>
-                                {workOrder.status}
-                            </Badge>
+                            <p className="text-gray-600 dark:text-gray-400">{formatDate(workOrder.interventionDateTime.toString())}</p>
                         </div>
                     </div>
 
                     <div className="space-y-4">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                ID Équipement
+                                Durée approximative
                             </label>
-                            <p className="text-gray-600 dark:text-gray-400">{workOrder.equipmentId}</p>
+                            <p className="text-gray-600 dark:text-gray-400">
+                                {workOrder.approximateDuration ? `${workOrder.approximateDuration} minutes` : 'Non spécifiée'}
+                            </p>
                         </div>
                         
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Date début prévue
+                                Créé par
                             </label>
-                            <p className="text-gray-600 dark:text-gray-400">{formatDateOnly(workOrder.plannedStartDate)}</p>
-                        </div>
-                        
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Date fin prévue
-                            </label>
-                            <p className="text-gray-600 dark:text-gray-400">{formatDateOnly(workOrder.plannedEndDate)}</p>
-                        </div>
-                        
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Durée estimée
-                            </label>
-                            <p className="text-gray-600 dark:text-gray-400">{workOrder.estimatedDuration} heures</p>
+                            <p className="text-gray-600 dark:text-gray-400">{workOrder.createdById}</p>
                         </div>
                         
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Créé le
                             </label>
-                            <p className="text-gray-600 dark:text-gray-400">{formatDate(workOrder.createdAt)}</p>
+                            <p className="text-gray-600 dark:text-gray-400">{formatDate(workOrder.createdAt.toString())}</p>
                         </div>
                         
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Modifié le
                             </label>
-                            <p className="text-gray-600 dark:text-gray-400">{formatDate(workOrder.updatedAt)}</p>
+                            <p className="text-gray-600 dark:text-gray-400">{formatDate(workOrder.updatedAt.toString())}</p>
                         </div>
                     </div>
                 </div>
 
-                {/* Informations détaillées */}
+                {/* Étapes à suivre */}
                 <div className="space-y-4">
                     <div>
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Description
+                            Étapes à suivre
                         </label>
                         <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
                             <p className="text-gray-600 dark:text-gray-400 whitespace-pre-wrap">
-                                {workOrder.description || "Aucune description spécifiée"}
-                            </p>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Instructions
-                        </label>
-                        <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                            <p className="text-gray-600 dark:text-gray-400 whitespace-pre-wrap">
-                                {workOrder.instructions || "Aucune instruction spécifiée"}
+                                {workOrder.stepsToFollow}
                             </p>
                         </div>
                     </div>
