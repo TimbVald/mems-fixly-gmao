@@ -23,12 +23,12 @@ export const metadata: Metadata = {
 export default function Homepage() {
   return (
     <>
-      <Hero />
-      <Features />
+      {/* <Hero /> */}
+      {/* <Features /> */}
       <Tech />
       {/* <Testimonials /> */}
-      <Pricing />
-      <Contact />
+      {/* <Pricing /> */}
+      {/* <Contact /> */}
     </>
   );
 }

@@ -2,11 +2,17 @@
 import React from "react";
 import { useModal } from "../../hooks/useModal";
 import { Modal } from "../ui/modal";
-import Button from "../ui/button/Button";
-import Input from "../form/input/InputField";
+import { Button } from "../ui/button";
+import InputField from "../form/input/InputField";
 import Label from "../form/Label";
+import { User } from "@/db/types";
 
-export default function UserAddressCard() {
+
+interface UserAddressCardProps {
+  user: User | null | undefined;
+}
+
+export default function UserAddressCard({ user }: UserAddressCardProps) {
   const { isOpen, openModal, closeModal } = useModal();
   const handleSave = () => {
     // Handle save logic here
@@ -15,6 +21,7 @@ export default function UserAddressCard() {
   };
   return (
     <>
+      {user && (
       <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
           <div>
@@ -41,14 +48,14 @@ export default function UserAddressCard() {
                 </p>
               </div>
 
-              <div>
+              {/* <div>
                 <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
                   Code postal
                 </p>
                 <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                   BP 12345
                 </p>
-              </div>
+              </div> */}
 
               <div>
                 <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
@@ -84,6 +91,7 @@ export default function UserAddressCard() {
           </button>
         </div>
       </div>
+      )}
       <Modal isOpen={isOpen} onClose={closeModal} className="max-w-[700px] m-4">
         <div className="relative w-full p-4 overflow-y-auto bg-white no-scrollbar rounded-3xl dark:bg-gray-900 lg:p-11">
           <div className="px-2 pr-14">
@@ -99,22 +107,22 @@ export default function UserAddressCard() {
               <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
                 <div>
                   <Label>Pays</Label>
-                  <Input type="text" defaultValue="Cameroun" />
+                  <InputField type="text" defaultValue="Cameroun" />
                 </div>
 
                 <div>
                   <Label>Ville/État</Label>
-                  <Input type="text" defaultValue="Yaoundé, Cameroun" />
+                  <InputField type="text" defaultValue="Yaoundé, Cameroun" />
                 </div>
 
                 <div>
                   <Label>Code postal</Label>
-                  <Input type="text" defaultValue="BP 12345" />
+                  <InputField type="text" defaultValue="BP 12345" />
                 </div>
 
                 <div>
                   <Label>Identifiant fiscal</Label>
-                  <Input type="text" defaultValue="CM123456789" />
+                  <InputField type="text" defaultValue="CM123456789" />
                 </div>
               </div>
             </div>

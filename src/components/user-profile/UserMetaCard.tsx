@@ -2,14 +2,21 @@
 import React from "react";
 import { useModal } from "../../hooks/useModal";
 import { Modal } from "../ui/modal";
-import Button from "../ui/button/Button";
-import Input from "../form/input/InputField";
+import { Button } from "../ui/button";
+import InputField from "../form/input/InputField";
 import Label from "../form/Label";
 import Image from "next/image";
+import { User } from "@/db/types";
 
 
-export default function UserMetaCard() {
+interface UserMetaCardProps {
+  user: User | null | undefined;
+}
+
+export default function UserMetaCard({ user }: UserMetaCardProps) {
   const { isOpen, openModal, closeModal } = useModal();
+  
+  
   const handleSave = () => {
     // Handle save logic here
     console.log("Saving changes...");
@@ -17,6 +24,7 @@ export default function UserMetaCard() {
   };
   return (
     <>
+    {user && (
       <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
         <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
           <div className="flex flex-col items-center w-full gap-6 xl:flex-row">
@@ -24,21 +32,21 @@ export default function UserMetaCard() {
               <Image
                 width={80}
                 height={80}
-                src="/images/user/owner.jpg"
+                src={user.image || "/images/user/owner.jpg"}
                 alt="user"
               />
             </div>
             <div className="order-3 xl:order-2">
               <h4 className="mb-2 text-lg font-semibold text-center text-gray-800 dark:text-white/90 xl:text-left">
-                Cabrel L. KEPSEU
+                {user.name}
               </h4>
               <div className="flex flex-col items-center gap-1 text-center xl:flex-row xl:gap-3 xl:text-left">
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Développeur FullStack
+                  {user.email}
                 </p>
                 <div className="hidden h-3.5 w-px bg-gray-300 dark:bg-gray-700 xl:block"></div>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Yaoundé, Cameroun
+                {user.role?.charAt(0).toUpperCase() + user.role?.slice(1)}
                 </p>
               </div>
             </div>
@@ -134,8 +142,9 @@ export default function UserMetaCard() {
             </svg>
             Modifier
           </button>
+          </div>
         </div>
-      </div>
+      )}
       <Modal isOpen={isOpen} onClose={closeModal} className="max-w-[700px] m-4">
         <div className="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
           <div className="px-2 pr-14">
@@ -156,7 +165,7 @@ export default function UserMetaCard() {
                 <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
                   <div>
                     <Label>Facebook</Label>
-                    <Input
+                    <InputField
                       type="text"
                       defaultValue="https://www.facebook.com/PimjoHQ"
                     />
@@ -164,12 +173,12 @@ export default function UserMetaCard() {
 
                   <div>
                     <Label>X.com</Label>
-                    <Input type="text" defaultValue="https://x.com/PimjoHQ" />
+                    <InputField type="text" defaultValue="https://x.com/PimjoHQ" />
                   </div>
 
                   <div>
                     <Label>Linkedin</Label>
-                    <Input
+                    <InputField
                       type="text"
                       defaultValue="https://www.linkedin.com/company/pimjo"
                     />
@@ -177,7 +186,7 @@ export default function UserMetaCard() {
 
                   <div>
                     <Label>Instagram</Label>
-                    <Input
+                    <InputField
                       type="text"
                       defaultValue="https://instagram.com/PimjoHQ"
                     />
@@ -192,27 +201,27 @@ export default function UserMetaCard() {
                 <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
                   <div className="col-span-2 lg:col-span-1">
                     <Label>Prénom</Label>
-                    <Input type="text" defaultValue="Cabrel" />
+                    <InputField type="text" defaultValue="Cabrel" />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
                     <Label>Nom</Label>
-                    <Input type="text" defaultValue="KEPSEU" />
+                    <InputField type="text" defaultValue="KEPSEU" />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
                     <Label>Adresse email</Label>
-                    <Input type="text" defaultValue="cabrel.kepseu@gmail.com" />
+                    <InputField type="text" defaultValue="cabrel.kepseu@gmail.com" />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
                     <Label>Téléphone</Label>
-                    <Input type="text" defaultValue="+237 6XX XXX XXX" />
+                    <InputField type="text" defaultValue="+237 6XX XXX XXX" />
                   </div>
 
                   <div className="col-span-2">
                     <Label>Biographie</Label>
-                    <Input type="text" defaultValue="Développeur FullStack" />
+                    <InputField type="text" defaultValue="Développeur FullStack" />
                   </div>
                 </div>
               </div>

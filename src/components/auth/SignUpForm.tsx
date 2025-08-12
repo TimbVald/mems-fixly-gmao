@@ -202,26 +202,25 @@ export default function SignUpForm() {
                       <FormItem>
                         <FormLabel>Mot de passe</FormLabel>
                         <FormControl>
-                          <Input placeholder="Entrez votre mot de passe" type={showPassword ? "text" : "password"} {...field} />
+                          <div className="relative">
+                            <Input placeholder="Entrez votre mot de passe" type={showPassword ? "text" : "password"} {...field} />
+                            <span
+                              onClick={() => setShowPassword(!showPassword)}
+                              className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2 fill-gray-500 dark:fill-gray-400"
+                            >
+                              {showPassword ? (
+                                <EyeIcon />
+                              ) : (
+                                <EyeCloseIcon />
+                              )}
+                            </span>
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
                 </div>
-                {/* <!-- Checkbox --> */}
-                  <div className="relative">
-                    <span
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2 fill-gray-500 dark:fill-gray-400"
-                    >
-                      {showPassword ? (
-                        <EyeIcon />
-                      ) : (
-                        <EyeCloseIcon />
-                      )}
-                    </span>
-                  </div>
                 {/* <!-- Checkbox --> */}
                 <div className="flex items-center gap-3">
                   <Checkbox

@@ -2,11 +2,17 @@
 import React from "react";
 import { useModal } from "../../hooks/useModal";
 import { Modal } from "../ui/modal";
-import Button from "../ui/button/Button";
-import Input from "../form/input/InputField";
+import { Button } from "../ui/button";
+import InputField from "../form/input/InputField";
 import Label from "../form/Label";
+import { User } from "@/db/types";
 
-export default function UserInfoCard() {
+
+interface UserInfoCardProps {
+  user: User | null | undefined;
+}
+
+export default function UserInfoCard({ user }: UserInfoCardProps) {
   const { isOpen, openModal, closeModal } = useModal();
   const handleSave = () => {
     // Handle save logic here
@@ -14,6 +20,8 @@ export default function UserInfoCard() {
     closeModal();
   };
   return (
+    <>
+    {user && (
     <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
         <div>
@@ -22,48 +30,63 @@ export default function UserInfoCard() {
           </h4>
 
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
+            {/* Nom Complet */}
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Prénom
+                Nom Complet
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                Cabrel L.
+                {user.name}
               </p>
             </div>
 
+            {/* Matricule */}
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Nom
+                Matricule
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                KEPSEU
+                {user.matricule || 'Non défini'}
               </p>
             </div>
 
+            {/* Role */}
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Adresse email
+                Role
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                cabrel.klc@admin.com
+                {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
               </p>
             </div>
 
+            {/* Email */}
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Téléphone
+                Email
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                +237 6XX XXX XXX
+                {user.email}
               </p>
             </div>
 
+            {/* Date de Création du compte */}
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Biographie
+                Date de Création du compte
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                Développeur FullStack
+                {user.createdAt.toLocaleDateString()}
+              </p>
+            </div>
+
+            {/* Date de Modification du compte */}
+            <div>
+              <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                Date de Modification du compte
+              </p>
+              <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                  {user.updatedAt.toLocaleDateString()}
               </p>
             </div>
           </div>
@@ -112,7 +135,7 @@ export default function UserInfoCard() {
                 <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
                   <div>
                     <Label>Facebook</Label>
-                    <Input
+                    <InputField
                       type="text"
                       defaultValue="https://www.facebook.com/PimjoHQ"
                     />
@@ -120,12 +143,12 @@ export default function UserInfoCard() {
 
                   <div>
                     <Label>X.com</Label>
-                    <Input type="text" defaultValue="https://x.com/PimjoHQ" />
+                    <InputField type="text" defaultValue="https://x.com/PimjoHQ" />
                   </div>
 
                   <div>
                     <Label>Linkedin</Label>
-                    <Input
+                    <InputField
                       type="text"
                       defaultValue="https://www.linkedin.com/company/pimjo"
                     />
@@ -133,7 +156,7 @@ export default function UserInfoCard() {
 
                   <div>
                     <Label>Instagram</Label>
-                    <Input
+                    <InputField
                       type="text"
                       defaultValue="https://instagram.com/PimjoHQ"
                     />
@@ -148,27 +171,27 @@ export default function UserInfoCard() {
                 <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
                   <div className="col-span-2 lg:col-span-1">
                     <Label>Prénom</Label>
-                    <Input type="text" defaultValue="Cabrel" />
+                    <InputField type="text" defaultValue="Cabrel" />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
                     <Label>Nom</Label>
-                    <Input type="text" defaultValue="KEPSEU" />
+                    <InputField type="text" defaultValue="KEPSEU" />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
                     <Label>Adresse email</Label>
-                    <Input type="text" defaultValue="cabrel.klc@admin.com" />
+                    <InputField type="text" defaultValue="cabrel.klc@admin.com" />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
                     <Label>Téléphone</Label>
-                    <Input type="text" defaultValue="+237 6XX XXX XXX" />
+                    <InputField type="text" defaultValue="+237 6XX XXX XXX" />
                   </div>
 
                   <div className="col-span-2">
                     <Label>Biographie</Label>
-                    <Input type="text" defaultValue="Développeur FullStack" />
+                    <InputField type="text" defaultValue="Développeur FullStack" />
                   </div>
                 </div>
               </div>
@@ -185,5 +208,7 @@ export default function UserInfoCard() {
         </div>
       </Modal>
     </div>
+    )}
+    </>
   );
 }

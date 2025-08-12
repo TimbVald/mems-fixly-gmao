@@ -36,8 +36,8 @@ const navItems: NavItem[] = [
     icon: <BoxCubeIcon />,
     name: "Équipements",
     subItems: [
-      { name: "Liste des Équipements", path: "/equipments", pro: false },
-      { name: "Ajouter Équipement", path: "/equipments/add", pro: false },
+      { name: "Liste des Équipements", path: "/equipements", pro: false },
+      { name: "Ajouter Équipement", path: "/equipements/add", pro: false },
       { name: "Catégories", path: "/equipments/categories", pro: false },
       { name: "Maintenance Préventive", path: "/equipments/preventive", pro: false },
     ],
@@ -56,10 +56,8 @@ const navItems: NavItem[] = [
     icon: <TableIcon />,
     name: "Stocks",
     subItems: [
-      { name: "Inventaire", path: "/stocks/inventory", pro: false },
+      { name: "Inventaire", path: "/stocks", pro: false },
       { name: "Pièces Détachées", path: "/stocks/spare-parts", pro: false },
-      { name: "Commandes", path: "/stocks/orders", pro: false },
-      { name: "Fournisseurs", path: "/stocks/suppliers", pro: false },
     ],
   },
   {

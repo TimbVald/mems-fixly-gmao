@@ -7,6 +7,11 @@
 .pnp.js
 .yarn/install-state.gz
 
+
+setup-db.js
+userinput.py
+
+
 # env
 .env
 .env.local
@@ -38,6 +43,9 @@ yarn-error.log*
 
 # vercel
 .vercel
+
+# prisma
+*.db
 
 # typescript
 *.tsbuildinfo

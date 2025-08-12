@@ -180,23 +180,44 @@ export default function AppHero() {
  
         {/* Particle effects - subtle dots */}
         <div className="absolute inset-0 opacity-20">
-          {Array.from({ length: 20 }).map((_, i) => (
+          {[
+            { top: 15, left: 25, duration: 4, delay: 0.5 },
+            { top: 35, left: 75, duration: 3.5, delay: 1 },
+            { top: 55, left: 15, duration: 4.5, delay: 0.2 },
+            { top: 75, left: 85, duration: 3, delay: 1.5 },
+            { top: 25, left: 45, duration: 4.2, delay: 0.8 },
+            { top: 65, left: 35, duration: 3.8, delay: 0.3 },
+            { top: 85, left: 65, duration: 4.8, delay: 1.2 },
+            { top: 45, left: 90, duration: 3.2, delay: 0.7 },
+            { top: 10, left: 60, duration: 4.3, delay: 0.1 },
+            { top: 90, left: 20, duration: 3.7, delay: 1.8 },
+            { top: 30, left: 80, duration: 4.1, delay: 0.4 },
+            { top: 70, left: 10, duration: 3.9, delay: 1.3 },
+            { top: 50, left: 55, duration: 4.6, delay: 0.6 },
+            { top: 20, left: 70, duration: 3.3, delay: 1.7 },
+            { top: 80, left: 40, duration: 4.4, delay: 0.9 },
+            { top: 40, left: 95, duration: 3.6, delay: 1.1 },
+            { top: 60, left: 5, duration: 4.7, delay: 0.15 },
+            { top: 95, left: 50, duration: 3.4, delay: 1.6 },
+            { top: 5, left: 85, duration: 4.9, delay: 1.4 },
+            { top: 85, left: 30, duration: 3.1, delay: 0.25 }
+          ].map((particle, i) => (
             <motion.div
               key={i}
               className="absolute h-1 w-1 rounded-full bg-white"
               style={{
-                top: `${Math.random() * 100}%`,
-                left: `${Math.random() * 100}%`,
+                top: `${particle.top}%`,
+                left: `${particle.left}%`,
               }}
               animate={{
                 opacity: [0.2, 0.8, 0.2],
                 scale: [1, 1.5, 1],
               }}
               transition={{
-                duration: 3 + Math.random() * 2,
+                duration: particle.duration,
                 repeat: Infinity,
                 ease: 'easeInOut' as const,
-                delay: Math.random() * 2,
+                delay: particle.delay,
               }}
             />
           ))}
