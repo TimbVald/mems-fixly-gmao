@@ -64,8 +64,8 @@ const navItems: NavItem[] = [
     icon: <UserCircleIcon />,
     name: "Personnel",
     subItems: [
-      { name: "Équipes", path: "/personnel/teams", pro: false },
-      { name: "Techniciens", path: "/personnel/technicians", pro: false },
+      { name: "Liste du Personnel", path: "/personnel", pro: false },
+      { name: "Ajouter un Personel", path: "/personnel/add", pro: false },
       { name: "Compétences", path: "/personnel/skills", pro: false },
       { name: "Planning", path: "/personnel/schedule", pro: false },
     ],
@@ -91,10 +91,9 @@ const othersItems: NavItem[] = [
     icon: <PageIcon />,
     name: "Configuration",
     subItems: [
-      { name: "Paramètres", path: "/settings/general", pro: false },
+      { name: "Profil", path: "/profil", pro: false },
       { name: "Utilisateurs", path: "/settings/users", pro: false },
       { name: "Rôles", path: "/settings/roles", pro: false },
-      { name: "Sécurité", path: "/settings/security", pro: false },
     ],
   },
   {

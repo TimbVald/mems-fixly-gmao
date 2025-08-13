@@ -12,6 +12,7 @@ import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { signUp } from "@/server/users";
 import { Form, FormItem, FormControl, FormLabel, FormMessage, FormField } from "../ui/form";
+import { Loader2 } from "lucide-react";
 
 const formSchema = z.object({
   firstName: z.string().min(2, "Le prénom doit contenir au moins 2 caractères"),
@@ -40,7 +41,7 @@ export default function SignUpForm() {
     try {
       await authClient.signIn.social({
         provider: "google",
-        callbackURL: "/dashboard"
+        callbackURL: "/personnel"
       })
     } catch (error) {
       console.error("Erreur lors de l'authentification Google:", error)
@@ -55,7 +56,7 @@ export default function SignUpForm() {
     const { success, message } = await signUp(fullName, values.email, values.password)
     if (success) {
       toast.success(message as string)
-      router.push("/dashboard")
+      router.push("/personnel")
     } else {
       toast.error(message as string)
     }
@@ -68,21 +69,21 @@ export default function SignUpForm() {
     <div className="flex flex-col flex-1 lg:w-1/2 w-full overflow-y-auto no-scrollbar">
       <div className="w-full max-w-md sm:pt-10 mx-auto mb-5">
         <Link
-          href="/dashboard"
+          href="/personnel"
           className="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
         >
           <ChevronLeftIcon />
-          Back to dashboard
+          Retour au personnel
         </Link>
       </div>
       <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
         <div>
           <div className="mb-5 sm:mb-8">
             <h1 className="mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">
-              Sign Up
+              Inscription
             </h1>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Enter your email and password to sign up!
+              Veuillez remplir les informations pour l'inscription.
             </p>
           </div>
           <div>
@@ -128,7 +129,7 @@ export default function SignUpForm() {
                 >
                   <path d="M15.6705 1.875H18.4272L12.4047 8.75833L19.4897 18.125H13.9422L9.59717 12.4442L4.62554 18.125H1.86721L8.30887 10.7625L1.51221 1.875H7.20054L11.128 7.0675L15.6705 1.875ZM14.703 16.475H16.2305L6.37054 3.43833H4.73137L14.703 16.475Z" />
                 </svg>
-                Sign up with X
+                S'incrira avec X
               </button>
             </div>
             <div className="relative py-3 sm:py-5">
@@ -242,23 +243,11 @@ export default function SignUpForm() {
                 {/* <!-- Button --> */}
                 <div>
                   <button className="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600" type="submit" disabled={isLoading}>
-                    S'inscrire
+                    {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Valider l'inscription"}
                   </button>
                 </div>
               </form>
             </Form>
-
-            <div className="mt-5">
-              <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
-                Vous avez déjà un compte ?
-                <Link
-                  href="/signin"
-                  className="text-brand-500 hover:text-brand-600 dark:text-brand-400"
-                >
-                  Se connecter
-                </Link>
-              </p>
-            </div>
           </div>
         </div>
       </div>
