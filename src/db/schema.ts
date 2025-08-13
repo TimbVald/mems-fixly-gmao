@@ -161,6 +161,23 @@ export const stocks = pgTable('stocks', {
   nameUnique: unique().on(table.name),
 }));
 
+// Fiche chantier table
+export const ficheChantier = pgTable('fiche_chantier', {
+  id: text('id').primaryKey(),
+  nom: text('nom').notNull(),
+  localisation: text('localisation').notNull(),
+  nomEngin: text('nomEngin').notNull(),
+  date: timestamp('date').notNull(),
+  heureDebut: text('heureDebut').notNull(), // Format HH:MM
+  heureFin: text('heureFin').notNull(), // Format HH:MM
+  avancement: text('avancement').notNull(),
+  kilometrageDebut: real('kilometrageDebut'),
+  kilometrageFin: real('kilometrageFin'),
+  carburant: real('carburant'),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+  updatedAt: timestamp('updatedAt').notNull().defaultNow(),
+});
+
 
 
 // Relations
@@ -232,4 +249,8 @@ export const interventionReportsRelations = relations(interventionReports, ({ on
 
 export const stocksRelations = relations(stocks, ({ many }) => ({
   // Relations can be added here if needed
+}));
+
+export const ficheChantierRelations = relations(ficheChantier, ({ many }) => ({
+  // No relations for now as requested - standalone table
 }));

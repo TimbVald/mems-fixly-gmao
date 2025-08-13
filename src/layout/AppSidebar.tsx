@@ -73,7 +73,12 @@ const navItems: NavItem[] = [
   {
     icon: <CalenderIcon />,
     name: "Chantiers",
-    path: "/sites",
+    subItems: [
+      { name: "Fiches Chantier", path: "/fiche-chantier", pro: false },
+      { name: "Ajouter une Fiche", path: "/fiche-chantier/add", pro: false },
+      { name: "Sites", path: "/sites", pro: false },
+      { name: "Planning Chantiers", path: "/sites/planning", pro: false },
+    ],
   },
 ];
 
