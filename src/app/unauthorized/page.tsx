@@ -1,41 +1,55 @@
+import GridShape from "@/components/common/GridShape";
+import Image from "next/image";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ShieldX } from "lucide-react";
+import React from "react";
 
 export default function UnauthorizedPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
-            <ShieldX className="h-6 w-6 text-red-600" />
-          </div>
-          <CardTitle className="text-2xl font-bold text-gray-900">
-            Accès refusé
-          </CardTitle>
-          <CardDescription className="text-gray-600">
-            Vous n'avez pas les permissions nécessaires pour accéder à cette page.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <p className="text-sm text-gray-500 text-center">
-            Si vous pensez qu'il s'agit d'une erreur, contactez votre administrateur.
-          </p>
-          <div className="flex flex-col space-y-2">
-            <Button asChild className="w-full">
-              <Link href="/dashboard">
-                Retour au tableau de bord
-              </Link>
-            </Button>
-            <Button variant="outline" asChild className="w-full">
-              <Link href="/signin">
-                Se reconnecter
-              </Link>
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+    <div className="relative flex flex-col items-center justify-center min-h-screen p-6 overflow-hidden z-1">
+      <GridShape />
+      <div className="mx-auto w-full max-w-[242px] text-center sm:max-w-[472px]">
+        <h1 className="mb-8 font-bold text-gray-800 text-title-md dark:text-white/90 xl:text-title-2xl">
+          ACCÈS REFUSÉ
+        </h1>
+
+        <Image
+          src="/images/error/403.svg"
+          alt="403 - Accès refusé"
+          className="dark:hidden"
+          width={472}
+          height={152}
+        />
+        <Image
+          src="/images/error/403-dark.svg"
+          alt="403 - Accès refusé"
+          className="hidden dark:block"
+          width={472}
+          height={152}
+        />
+
+        <p className="mt-10 mb-6 text-base text-gray-700 dark:text-gray-400 sm:text-lg">
+          Vous n'avez pas les permissions nécessaires pour accéder à cette page!
+        </p>
+
+        <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+          <Link
+            href="/profil"
+            className="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-5 py-3.5 text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200"
+          >
+            Vérifier votre profil
+          </Link>
+          <Link
+            href="/signin"
+            className="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-5 py-3.5 text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200"
+          >
+            Se reconnecter
+          </Link>
+        </div>
+      </div>
+      {/* <!-- Footer --> */}
+      <p className="absolute text-sm text-center text-gray-500 -translate-x-1/2 bottom-6 left-1/2 dark:text-gray-400">
+        &copy; {new Date().getFullYear()} - Mem's Fixly
+      </p>
     </div>
   );
 }
