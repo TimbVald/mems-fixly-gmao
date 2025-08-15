@@ -19,6 +19,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import PrintButton from "@/components/print/PrintButton";
+import FicheChantierPrint from "@/components/print/FicheChantierPrint";
 
 interface FicheChantier {
   id: string;
@@ -154,6 +156,12 @@ export default function FicheChantierDetailsPage() {
           </div>
         </div>
         <div className="flex space-x-2">
+          <PrintButton
+            documentName={`Fiche_${fiche.nom.replace(/\s+/g, '_')}`}
+            variant="outline"
+          >
+            <FicheChantierPrint ficheChantier={fiche} />
+          </PrintButton>
           <Link href={`/fiche-chantier/${params.id}/edit`}>
             <Button variant="outline">
               <Edit className="mr-2 h-4 w-4" />

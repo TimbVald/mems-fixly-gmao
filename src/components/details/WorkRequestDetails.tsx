@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation"
 import ComponentCard from "../common/ComponentCard"
 import { Loader2, Edit, ArrowLeft } from "lucide-react"
 import Badge from "../ui/badge/Badge"
+import PrintButton from "../print/PrintButton"
+import WorkRequestPrint from "../print/WorkRequestPrint"
 
 interface WorkRequest {
     id: string;
@@ -93,13 +95,21 @@ export default function WorkRequestDetails({ workRequestId }: WorkRequestDetails
                         <ArrowLeft size={16} />
                         Retour à la liste
                     </button>
-                    <button
-                        onClick={() => router.push(`/interventions/requests/${workRequest.id}/edit`)}
-                        className="flex items-center gap-2 px-4 py-2 text-white bg-brand-500 hover:bg-brand-600 rounded-lg transition-colors"
-                    >
-                        <Edit size={16} />
-                        Modifier
-                    </button>
+                    <div className="flex items-center gap-2">
+                        <PrintButton
+                            documentName={`Demande_${workRequest.requestNumber}`}
+                            variant="outline"
+                        >
+                            <WorkRequestPrint workRequest={workRequest} />
+                        </PrintButton>
+                        <button
+                            onClick={() => router.push(`/interventions/requests/${workRequest.id}/edit`)}
+                            className="flex items-center gap-2 px-4 py-2 text-white bg-brand-500 hover:bg-brand-600 rounded-lg transition-colors"
+                        >
+                            <Edit size={16} />
+                            Modifier
+                        </button>
+                    </div>
                 </div>
 
                 {/* Informations principales */}

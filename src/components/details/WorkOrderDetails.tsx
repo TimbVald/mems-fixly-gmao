@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation"
 import ComponentCard from "../common/ComponentCard"
 import { Loader2, Edit, ArrowLeft } from "lucide-react"
 import Badge from "../ui/badge/Badge"
+import PrintButton from "../print/PrintButton"
+import WorkOrderPrint from "../print/WorkOrderPrint"
 
 interface WorkOrder {
     id: string;
@@ -88,13 +90,21 @@ export default function WorkOrderDetails({ workOrderId }: WorkOrderDetailsProps)
                         <ArrowLeft size={16} />
                         Retour à la liste
                     </button>
-                    <button
-                        onClick={() => router.push(`/interventions/work-orders/${workOrder.id}/edit`)}
-                        className="flex items-center gap-2 px-4 py-2 text-white bg-brand-500 hover:bg-brand-600 rounded-lg transition-colors"
-                    >
-                        <Edit size={16} />
-                        Modifier
-                    </button>
+                    <div className="flex items-center gap-2">
+                        <PrintButton
+                            documentName={`Ordre_${workOrder.workOrderNumber}`}
+                            variant="outline"
+                        >
+                            <WorkOrderPrint workOrder={workOrder} />
+                        </PrintButton>
+                        <button
+                            onClick={() => router.push(`/interventions/work-orders/${workOrder.id}/edit`)}
+                            className="flex items-center gap-2 px-4 py-2 text-white bg-brand-500 hover:bg-brand-600 rounded-lg transition-colors"
+                        >
+                            <Edit size={16} />
+                            Modifier
+                        </button>
+                    </div>
                 </div>
 
                 {/* Informations principales */}

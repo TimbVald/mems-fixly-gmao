@@ -57,7 +57,7 @@ const navItems: NavItem[] = [
     name: "Stocks",
     subItems: [
       { name: "Inventaire", path: "/stocks", pro: false },
-      { name: "Pièces Détachées", path: "/stocks/spare-parts", pro: false },
+      { name: "Historique Stocks", path: "/stocks/historique-stock", pro: false },
     ],
   },
   {
