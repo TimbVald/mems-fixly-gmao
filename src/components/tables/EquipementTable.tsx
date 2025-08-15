@@ -156,7 +156,7 @@ export default function EquipementTable() {
                                                         <Image
                                                             width={40}
                                                             height={40}
-                                                            src="/images/equipement.png"
+                                                            src="/images/equipement.svg"
                                                             alt={equipement.name}
                                                         />
                                                     </div>

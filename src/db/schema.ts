@@ -4,6 +4,9 @@ import { relations } from 'drizzle-orm';
 // Enum for Role
 export const roleEnum = pgEnum('role', ['PERSONNEL', 'TECHNICIEN', 'ADMIN']);
 
+// Enum for Stock Status
+export const stockStatusEnum = pgEnum('stock_status', ['ajouter', 'retirer']);
+
 // User table
 export const users = pgTable('user', {
   id: text('id').primaryKey(),
@@ -161,6 +164,19 @@ export const stocks = pgTable('stocks', {
   nameUnique: unique().on(table.name),
 }));
 
+// Historique Stock table
+export const historiqueStock = pgTable('historique_stock', {
+  id: text('id').primaryKey(),
+  nom: text('nom').notNull(),
+  quantite: integer('quantite').notNull(),
+  fournisseur: text('fournisseur'),
+  prix: real('prix'),
+  statut: stockStatusEnum('statut').notNull(),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+  stockId: text('stockId').references(() => stocks.id, { onDelete: 'set null' }),
+  createdById: text('createdById').references(() => users.id),
+});
+
 // Fiche chantier table
 export const ficheChantier = pgTable('fiche_chantier', {
   id: text('id').primaryKey(),
@@ -248,7 +264,18 @@ export const interventionReportsRelations = relations(interventionReports, ({ on
 }));
 
 export const stocksRelations = relations(stocks, ({ many }) => ({
-  // Relations can be added here if needed
+  historique: many(historiqueStock),
+}));
+
+export const historiqueStockRelations = relations(historiqueStock, ({ one }) => ({
+  stock: one(stocks, {
+    fields: [historiqueStock.stockId],
+    references: [stocks.id],
+  }),
+  createdBy: one(users, {
+    fields: [historiqueStock.createdById],
+    references: [users.id],
+  }),
 }));
 
 export const ficheChantierRelations = relations(ficheChantier, ({ many }) => ({
