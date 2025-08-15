@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation"
 import { Form, FormItem, FormControl, FormLabel, FormMessage, FormField } from "@/components/ui/form";
 import InputField from "@/components/form/input/InputField";
 import ImageUpload from "@/components/form/input/ImageUpload";
+import DocumentUpload from "@/components/form/input/DocumentUpload";
 import Textarea from "@/components/form/input/TextArea";
 import ComponentCard from "../../common/ComponentCard"
 
@@ -162,8 +163,12 @@ export default function EquipementForm() {
                                 name="technicalFolder"
                                 render={({ field }) => (
                                     <FormItem>
+                                        <FormLabel>Dossier technique</FormLabel>
                                         <FormControl>
-                                            <Textarea placeholder="Entrez le dossier technique" {...field} />
+                                            <DocumentUpload
+                                                value={field.value || ""}
+                                                onChange={field.onChange}
+                                            />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
