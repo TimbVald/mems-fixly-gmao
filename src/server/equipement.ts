@@ -15,6 +15,7 @@ type EquipmentCreateInput = {
   failureOccurrence?: number;
   mtbf?: number;
   mttr?: number;
+  image?: string;
 };
 
 type EquipmentUpdateInput = Partial<EquipmentCreateInput>;

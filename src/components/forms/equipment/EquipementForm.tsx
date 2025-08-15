@@ -8,6 +8,7 @@ import { useTransition } from "react"
 import { useRouter } from "next/navigation"
 import { Form, FormItem, FormControl, FormLabel, FormMessage, FormField } from "@/components/ui/form";
 import InputField from "@/components/form/input/InputField";
+import ImageUpload from "@/components/form/input/ImageUpload";
 import Textarea from "@/components/form/input/TextArea";
 import ComponentCard from "../../common/ComponentCard"
 
@@ -22,6 +23,7 @@ const formSchema = z.object({
     failureOccurrence: z.coerce.number().optional() as z.ZodOptional<z.ZodNumber>,
     mtbf: z.coerce.number().optional() as z.ZodOptional<z.ZodNumber>,
     mttr: z.coerce.number().optional() as z.ZodOptional<z.ZodNumber>,
+    image: z.string().optional(),
 
 })
 
@@ -43,6 +45,7 @@ export default function EquipementForm() {
             failureOccurrence: undefined,
             mtbf: undefined,
             mttr: undefined,
+            image: "",
         }
     })
 
@@ -203,6 +206,25 @@ export default function EquipementForm() {
                                     <FormItem>
                                         <FormControl>
                                             <InputField type="number" step="any" placeholder="Entrez le MTTR" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                        <div>
+                            <FormField
+                                control={form.control}
+                                name="image"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Image</FormLabel>
+                                        <FormControl>
+                                            <ImageUpload
+                                                value={field.value || ''}
+                                                onChange={field.onChange}
+                                                placeholder="Sélectionnez une image pour l'équipement"
+                                            />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>

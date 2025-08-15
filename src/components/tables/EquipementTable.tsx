@@ -29,6 +29,7 @@ interface Equipement {
     failureOccurrence: number | null;
     mtbf: number | null;
     mttr: number | null;
+    image: string | null;
 }
 
 export default function EquipementTable() {
@@ -88,6 +89,12 @@ export default function EquipementTable() {
                                             className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
                                         >
                                             Equipement & Machine
+                                        </TableCell>
+                                        <TableCell
+                                            isHeader
+                                            className="px-5 py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400"
+                                        >
+                                            Image
                                         </TableCell>
                                         <TableCell
                                             isHeader
@@ -172,6 +179,22 @@ export default function EquipementTable() {
                                                         </span>
                                                     </div>
                                                 </div>
+                                            </TableCell>
+                                            <TableCell className="px-4 py-3 text-center">
+                                                {equipement.image ? (
+                                                    <div className="flex justify-center">
+                                                        <img 
+                                                            src={equipement.image} 
+                                                            alt={equipement.name}
+                                                            className="w-12 h-12 object-cover rounded-lg border border-gray-200 dark:border-gray-700"
+                                                            onError={(e) => {
+                                                                e.currentTarget.style.display = 'none';
+                                                            }}
+                                                        />
+                                                    </div>
+                                                ) : (
+                                                    <span className="text-gray-400 text-theme-xs">Aucune image</span>
+                                                )}
                                             </TableCell>
                                             <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                                                 {equipement.subAssemblies}

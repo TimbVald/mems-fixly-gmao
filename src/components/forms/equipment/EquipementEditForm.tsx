@@ -8,6 +8,7 @@ import { useTransition, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Form, FormItem, FormControl, FormLabel, FormMessage, FormField } from "@/components/ui/form";
 import InputField from "@/components/form/input/InputField";
+import ImageUpload from "@/components/form/input/ImageUpload";
 import Textarea from "@/components/form/input/TextArea";
 import ComponentCard from "../../common/ComponentCard"
 import { Loader2 } from "lucide-react"
@@ -23,6 +24,7 @@ const formSchema = z.object({
     failureOccurrence: z.number().optional(),
     mtbf: z.number().optional(),
     mttr: z.number().optional(),
+    image: z.string().optional(),
 })
 
 interface EquipementEditFormProps {
@@ -46,6 +48,7 @@ export default function EquipementEditForm({ equipementId }: EquipementEditFormP
             failureOccurrence: undefined,
             mtbf: undefined,
             mttr: undefined,
+            image: "",
         }
     })
 
@@ -91,6 +94,7 @@ export default function EquipementEditForm({ equipementId }: EquipementEditFormP
                 failureOccurrence: data.failureOccurrence ?? undefined,
                 mtbf: data.mtbf ?? undefined,
                 mttr: data.mttr ?? undefined,
+                image: data.image ?? "",
             });
         } else {
             toast.error("Équipement non trouvé");
@@ -284,6 +288,25 @@ export default function EquipementEditForm({ equipementId }: EquipementEditFormP
                                 )}
                             />
                         </div>
+                        <div>
+                             <FormField
+                                 control={form.control}
+                                 name="image"
+                                 render={({ field }) => (
+                                     <FormItem>
+                                         <FormLabel>Image</FormLabel>
+                                         <FormControl>
+                                             <ImageUpload
+                                                 value={field.value || ''}
+                                                 onChange={field.onChange}
+                                                 placeholder="Sélectionnez une image pour l'équipement"
+                                             />
+                                         </FormControl>
+                                         <FormMessage />
+                                     </FormItem>
+                                 )}
+                             />
+                         </div>
                         <div className="flex gap-4">
                             <button 
                                 type="button"

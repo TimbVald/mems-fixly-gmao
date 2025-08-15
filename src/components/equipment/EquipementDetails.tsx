@@ -19,6 +19,7 @@ interface Equipement {
     failureOccurrence: number | null;
     mtbf: number | null;
     mttr: number | null;
+    image: string | null;
     createdAt: string;
     updatedAt: string;
 }
@@ -106,6 +107,25 @@ export default function EquipementDetails({ equipementId }: EquipementDetailsPro
                         Modifier
                     </button>
                 </div>
+
+                {/* Image de l'équipement */}
+                {equipement.image && (
+                    <div className="mb-6">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Image de l'équipement
+                        </label>
+                        <div className="flex justify-center">
+                            <img 
+                                src={equipement.image} 
+                                alt={equipement.name}
+                                className="max-w-md max-h-64 object-contain rounded-lg border border-gray-200 dark:border-gray-700"
+                                onError={(e) => {
+                                    e.currentTarget.style.display = 'none';
+                                }}
+                            />
+                        </div>
+                    </div>
+                )}
 
                 {/* Informations principales */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

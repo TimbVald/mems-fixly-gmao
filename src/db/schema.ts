@@ -79,6 +79,7 @@ export const equipments = pgTable('equipments', {
   failureOccurrence: integer('failureOccurrence'),
   mtbf: real('mtbf'),
   mttr: real('mttr'),
+  image: text('image'), // URL ou chemin vers l'image de l'équipement
   createdAt: timestamp('createdAt').notNull().defaultNow(),
   updatedAt: timestamp('updatedAt').notNull().defaultNow(),
 });
