@@ -1,7 +1,18 @@
 "use server";
 import { db } from "@/server/db";
 import { equipments, workRequests, workOrders, interventionReports, users } from "@/db/schema";
-import { count, eq, gte, and } from "drizzle-orm";
+import { count, eq, gte, and, sql } from "drizzle-orm";
+
+// Interface pour les données MTBF/MTTR par équipement
+export interface EquipmentMTBFMTTRData {
+  equipmentId: string;
+  equipmentName: string;
+  totalInterventions: number;
+  totalRepairTime: number; // en minutes
+  totalOperatingTime: number; // en minutes
+  mtbf: number; // Mean Time Between Failures en minutes
+  mttr: number; // Mean Time To Repair en minutes
+}
 
 // Interface pour les statistiques du dashboard
 export interface DashboardStats {
@@ -124,7 +135,7 @@ export const getDashboardMetrics = async () => {
         pendingRequests: pendingRequests[0]?.count || 0,
         completedReports: completedReports[0]?.count || 0,
       },
-    };
+    };  
   } catch (error) {
     console.error('Erreur lors de la récupération des métriques:', error);
     return {
@@ -133,3 +144,68 @@ export const getDashboardMetrics = async () => {
     };
   }
 };
+
+// Fonction pour récupérer les statistiques MTBF/MTTR par équipement
+export const getEquipmentMTBFMTTRStats = async (): Promise<{ success: boolean; data?: EquipmentMTBFMTTRData[]; message?: string }> => {
+  try {
+    // Récupérer les données d'interventions correctives groupées par équipement
+    const equipmentInterventions = await db
+      .select({
+        equipmentId: equipments.id,
+        equipmentName: equipments.name,
+        totalInterventions: sql<number>`COUNT(${interventionReports.id})`,
+        totalRepairTime: sql<number>`COALESCE(SUM(${interventionReports.repairTime}), 0)`,
+        avgRepairTime: sql<number>`COALESCE(AVG(${interventionReports.repairTime}), 0)`,
+      })
+      .from(equipments)
+      .leftJoin(interventionReports, eq(equipments.id, interventionReports.equipmentId))
+      .where(eq(interventionReports.interventionType, 'corrective'))
+      .groupBy(equipments.id, equipments.name)
+      .having(sql`COUNT(${interventionReports.id}) > 0`);
+
+    const equipmentStats: EquipmentMTBFMTTRData[] = equipmentInterventions.map(equipment => {
+      const totalInterventions = Number(equipment.totalInterventions);
+      const totalRepairTime = Number(equipment.totalRepairTime);
+      
+      // Calcul du MTTR (Mean Time To Repair)
+      // MTTR = Temps total de réparation / Nombre d'interventions
+      const mttr = totalInterventions > 0 ? totalRepairTime / totalInterventions : 0;
+      
+      // Pour le MTBF, nous utilisons une estimation basée sur un temps de fonctionnement théorique
+      // En supposant que l'équipement fonctionne 24h/7j sauf pendant les réparations
+      // Temps de fonctionnement = (Nombre de jours depuis la première intervention × 24 × 60) - Temps total de réparation
+      const daysSinceFirstIntervention = 365; // Estimation sur 1 an
+      const totalOperatingTime = Math.max(0, (daysSinceFirstIntervention * 24 * 60) - totalRepairTime);
+      
+      // Calcul du MTBF (Mean Time Between Failures)
+      // MTBF = Temps de bon fonctionnement / (Nombre d'occurrences - 1)
+      // Si une seule intervention, on utilise le temps total de fonctionnement
+      const mtbf = totalInterventions > 1 
+        ? totalOperatingTime / (totalInterventions - 1)
+        : totalInterventions === 1 
+          ? totalOperatingTime
+          : 0;
+
+      return {
+        equipmentId: equipment.equipmentId,
+        equipmentName: equipment.equipmentName,
+        totalInterventions,
+        totalRepairTime,
+        totalOperatingTime,
+        mtbf: Math.max(0, mtbf),
+        mttr: Math.max(0, mttr),
+      };
+    });
+
+    return {
+      success: true,
+      data: equipmentStats,
+    };
+  } catch (error) {
+    console.error('Erreur lors de la récupération des statistiques MTBF/MTTR par équipement:', error);
+    return {
+       success: false,
+       message: 'Erreur lors de la récupération des statistiques par équipement',
+     };
+   }
+ };

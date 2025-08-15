@@ -1,7 +1,7 @@
 "use server";
 import { db } from "@/server/db";
-import { workRequests } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { workRequests, equipments } from "@/db/schema";
+import { eq, sql } from "drizzle-orm";
 import { createId } from "@paralleldrive/cuid2";
 import { getCurrentUser } from "@/lib/auth-helpers";
 
@@ -29,16 +29,32 @@ export const addWorkRequest = async (data: WorkRequestCreateInput) => {
             }
         }
 
-        const workRequest = await db.insert(workRequests).values({
-            id: createId(),
-            ...data,
-            createdById: currentUser.id, // Remplir automatiquement avec l'utilisateur connecté
-        }).returning();
+        // Utiliser une transaction pour s'assurer que les deux opérations réussissent
+        const result = await db.transaction(async (tx) => {
+            // 1. Créer la demande de travaux
+            const workRequest = await tx.insert(workRequests).values({
+                id: createId(),
+                ...data,
+                createdById: currentUser.id, // Remplir automatiquement avec l'utilisateur connecté
+            }).returning();
+
+            // 2. Incrémenter le failureOccurrence de l'équipement si equipmentId est fourni
+            if (data.equipmentId) {
+                await tx.update(equipments)
+                    .set({
+                        failureOccurrence: sql`COALESCE(${equipments.failureOccurrence}, 0) + 1`,
+                        updatedAt: new Date()
+                    })
+                    .where(eq(equipments.id, data.equipmentId));
+            }
+
+            return workRequest[0];
+        });
         
         return {
             success: true,
-            message: "Demande de travaux ajoutée avec succès",
-            data: workRequest[0]
+            message: "Demande de travaux ajoutée avec succès et compteur de pannes mis à jour",
+            data: result
         }
     } catch (error) {
         console.error(error)

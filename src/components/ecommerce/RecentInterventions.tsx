@@ -239,7 +239,7 @@ export default function RecentInterventions() {
                   <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
                     <Badge
                       size="sm"
-                      color={getInterventionPriority(intervention.repairTime)}
+                      color={getInterventionPriority(intervention.repairTime) as "info" | "warning" | "error"}
                     >
                       {intervention.repairTime > 240 ? 'Urgent' : intervention.repairTime > 120 ? 'Normal' : 'Faible'}
                     </Badge>
@@ -247,7 +247,7 @@ export default function RecentInterventions() {
                   <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
                     <Badge
                       size="sm"
-                      color={getInterventionStatus(intervention.createdAt)}
+                      color={intervention.interventionType === "préventive" ? "success" : "warning"}
                     >
                       {new Date().getTime() - intervention.createdAt.getTime() > 86400000 ? 'Terminé' : 'En cours'}
                     </Badge>

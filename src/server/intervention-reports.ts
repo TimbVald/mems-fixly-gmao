@@ -1,7 +1,7 @@
 "use server";
 import { db } from "@/server/db";
-import { interventionReports } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { interventionReports, equipments, workRequests } from "@/db/schema";
+import { eq, sql, desc } from "drizzle-orm";
 import { createId } from "@paralleldrive/cuid2";
 import { getCurrentUser } from "@/lib/auth-helpers";
 
@@ -35,16 +35,85 @@ export const addInterventionReport = async (data: InterventionReportCreateInput)
             }
         }
 
-        const interventionReport = await db.insert(interventionReports).values({
-            id: createId(),
-            ...data,
-            createdById: currentUser.id, // Utiliser l'ID de l'utilisateur connecté
-        }).returning();
+        // Utiliser une transaction pour s'assurer que les opérations réussissent
+        const result = await db.transaction(async (tx) => {
+            // 1. Créer le rapport d'intervention
+            const interventionReport = await tx.insert(interventionReports).values({
+                id: createId(),
+                ...data,
+                createdById: currentUser.id, // Utiliser l'ID de l'utilisateur connecté
+            }).returning();
+
+            // 2. Mettre à jour l'équipement si equipmentId est fourni et si c'est une intervention corrective
+            if (data.equipmentId && data.interventionType === 'corrective') {
+                // Récupérer les données actuelles de l'équipement
+                const currentEquipment = await tx.select({
+                    failureOccurrence: equipments.failureOccurrence,
+                    createdAt: equipments.createdAt
+                }).from(equipments).where(eq(equipments.id, data.equipmentId)).limit(1);
+
+                if (currentEquipment.length > 0) {
+                    const equipment = currentEquipment[0];
+                    const currentFailureOccurrence = equipment.failureOccurrence || 0;
+                    const newFailureOccurrence = currentFailureOccurrence + 1;
+
+                    // Récupérer la dernière demande d'intervention pour cet équipement
+                    const lastWorkRequest = await tx.select({
+                        createdAt: workRequests.createdAt
+                    }).from(workRequests)
+                    .where(eq(workRequests.equipmentId, data.equipmentId))
+                    .orderBy(desc(workRequests.createdAt))
+                    .limit(1);
+
+                    // Calculer le temps de bon fonctionnement avant la panne
+                    let operatingTimeBeforeFailure = 0;
+                    if (lastWorkRequest.length > 0) {
+                        // Temps entre la dernière demande d'intervention et maintenant (en minutes)
+                        const timeDiff = new Date().getTime() - lastWorkRequest[0].createdAt.getTime();
+                        operatingTimeBeforeFailure = Math.max(0, timeDiff / (1000 * 60)); // Convertir en minutes
+                    } else {
+                        // Si pas de demande précédente, utiliser le temps depuis la création de l'équipement
+                        const timeDiff = new Date().getTime() - equipment.createdAt.getTime();
+                        operatingTimeBeforeFailure = Math.max(0, timeDiff / (1000 * 60)); // Convertir en minutes
+                    }
+
+                    // Calculer le nouveau MTBF et MTTR selon les formules de l'image
+                    let newMTBF = 0;
+                    let newMTTR = 0;
+
+                    if (newFailureOccurrence > 0) {
+                        // MTTR = Temps total mis pour la réparation / Nombre d'occurrences
+                        // Pour simplifier, on utilise le repairTime actuel comme base
+                        newMTTR = data.repairTime;
+
+                        if (newFailureOccurrence > 1) {
+                            // MTBF = Temps de bon fonctionnement avant la panne / (Nombre d'occurrences - 1)
+                            newMTBF = operatingTimeBeforeFailure / (newFailureOccurrence - 1);
+                        } else {
+                            // Pour la première occurrence, MTBF = temps de fonctionnement total
+                            newMTBF = operatingTimeBeforeFailure;
+                        }
+                    }
+
+                    // Mettre à jour l'équipement avec les nouvelles valeurs
+                    await tx.update(equipments)
+                        .set({
+                            failureOccurrence: newFailureOccurrence,
+                            mtbf: Math.max(0, newMTBF),
+                            mttr: Math.max(0, newMTTR),
+                            updatedAt: new Date()
+                        })
+                        .where(eq(equipments.id, data.equipmentId));
+                }
+            }
+
+            return interventionReport[0];
+        });
         
         return {
             success: true,
             message: "Compte rendu d'intervention ajouté avec succès",
-            data: interventionReport[0]
+            data: result
         }
     } catch (error) {
         console.error(error)

@@ -4,6 +4,7 @@ import React from "react";
 import MonthlyTarget from "@/components/ecommerce/MonthlyTarget";
 import StatisticsChart from "@/components/ecommerce/StatisticsChart";
 import RecentInterventions from "@/components/ecommerce/RecentInterventions";
+import EquipmentMTBFMTTR from "@/components/ecommerce/EquipmentMTBFMTTR";
 
 export const metadata: Metadata = {
   title:
@@ -28,6 +29,10 @@ export default function Ecommerce() {
 
       <div className="col-span-12 xl:col-span-7">
         <RecentInterventions />
+      </div>
+
+      <div className="col-span-12">
+        <EquipmentMTBFMTTR />
       </div>
     </div>
   );
