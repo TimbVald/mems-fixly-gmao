@@ -50,12 +50,12 @@ export default function WorkRequestEditForm({ workRequestId }: WorkRequestEditFo
             const { success, data } = await getWorkRequestById(workRequestId)
             if (success && data) {
                 form.reset({
-                    requestNumber: data.requestNumber || "",
-                    requesterLastName: data.requesterLastName || "",
-                    requesterFirstName: data.requesterFirstName || "",
-                    equipmentName: data.equipmentName || "",
-                    failureType: (data.failureType as "mécanique" | "électrique") || "mécanique",
-                    failureDescription: data.failureDescription || "",
+                    requestNumber: data.requestNumber ?? "",
+                    requesterLastName: data.requesterLastName ?? "",
+                    requesterFirstName: data.requesterFirstName ?? "",
+                    equipmentName: data.equipmentName ?? "",
+                    failureType: (data.failureType as "mécanique" | "électrique") ?? "mécanique",
+                    failureDescription: data.failureDescription ?? "",
                 })
             } else {
                 toast.error("Demande d'intervention non trouvée")

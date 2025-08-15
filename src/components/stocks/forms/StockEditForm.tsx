@@ -57,8 +57,8 @@ export default function StockEditForm({ stockId }: StockEditFormProps) {
         form.reset({
           name: data.name,
           quantity: data.quantity,
-          supplier: data.supplier || "",
-          price: data.price || undefined,
+          supplier: data.supplier ?? "",
+          price: data.price ?? undefined,
         });
       } else {
         toast.error(message);

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
 
-import UserEditModal from "@/components/forms/UserEditModal"
+import UserRoleMatriculeModal from "@/components/forms/UserRoleMatriculeModal"
 
 export default function EditUserPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -37,7 +37,7 @@ export default function EditUserPage() {
   }
 
   return (
-    <UserEditModal
+    <UserRoleMatriculeModal
       isOpen={isModalOpen}
       onClose={handleClose}
       onSuccess={handleSuccess}

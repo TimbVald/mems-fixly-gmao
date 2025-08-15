@@ -6,3 +6,5 @@ export const authClient = createAuthClient({
         ? process.env.NEXT_PUBLIC_APP_URL || "https://your-domain.com"
         : "http://localhost:3000"
 })
+
+export type Session = typeof authClient.$Infer.Session.user;

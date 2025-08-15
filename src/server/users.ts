@@ -194,38 +194,58 @@ export const updateUser = async (userId: string, userData: {
     matricule?: string | null;
     password?: string;
 }) => {
-    try {
-        const updateData: any = {
-            updatedAt: new Date()
-        };
+    let retries = 3;
+    
+    while (retries > 0) {
+        try {
+            const updateData: any = {
+                updatedAt: new Date()
+            };
 
-        if (userData.name) updateData.name = userData.name;
-        if (userData.email) updateData.email = userData.email;
-        if (userData.role) updateData.role = userData.role as Role;
-        if (userData.matricule !== undefined) updateData.matricule = userData.matricule;
+            if (userData.name) updateData.name = userData.name;
+            if (userData.email) updateData.email = userData.email;
+            if (userData.role) updateData.role = userData.role as Role;
+            if (userData.matricule !== undefined) updateData.matricule = userData.matricule;
 
-        await db
-            .update(users)
-            .set(updateData)
-            .where(eq(users.id, userId));
+            await db
+                .update(users)
+                .set(updateData)
+                .where(eq(users.id, userId));
 
-        // Handle password update separately if provided
-        if (userData.password) {
-            // Note: Password update through auth system would require additional implementation
-            // For now, we'll just update the other fields
+            // Handle password update separately if provided
+            if (userData.password) {
+                // Note: Password update through auth system would require additional implementation
+                // For now, we'll just update the other fields
+            }
+            
+            return {
+                success: true,
+                message: "Utilisateur modifié avec succès"
+            }
+        } catch (error) {
+            console.error(`Tentative ${4 - retries}/3 échouée:`, error)
+            const e = error as Error
+            
+            // Si c'est une erreur de connexion, on réessaie
+            if (e.message.includes('ECONNRESET') || e.message.includes('connection') || e.message.includes('timeout')) {
+                retries--;
+                if (retries > 0) {
+                    console.log(`Nouvelle tentative dans 1 seconde... (${retries} tentatives restantes)`);
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    continue;
+                }
+            }
+            
+            return {
+                success: false,
+                message: e.message || "Erreur lors de la modification de l'utilisateur"
+            }
         }
-        
-        return {
-            success: true,
-            message: "Utilisateur modifié avec succès"
-        }
-    } catch (error) {
-        console.error(error)
-        const e = error as Error
-        return {
-            success: false,
-            message: e.message || "Erreur lors de la modification de l'utilisateur"
-        }
+    }
+    
+    return {
+        success: false,
+        message: "Erreur de connexion à la base de données après plusieurs tentatives"
     }
 }
 

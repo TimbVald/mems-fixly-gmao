@@ -52,13 +52,13 @@ export default function WorkOrderEditForm({ workOrderId }: WorkOrderEditFormProp
             const { success, data } = await getWorkOrderById(workOrderId)
             if (success && data) {
                 form.reset({
-                    workOrderNumber: data.workOrderNumber || "",
-                    workRequestNumber: data.workRequestNumber || "",
+                    workOrderNumber: data.workOrderNumber ?? "",
+                    workRequestNumber: data.workRequestNumber ?? "",
                     interventionType: data.interventionType as "préventive" | "curative",
-                    numberOfIntervenants: data.numberOfIntervenants || 1,
+                    numberOfIntervenants: data.numberOfIntervenants ?? 1,
                     interventionDateTime: data.interventionDateTime ? new Date(data.interventionDateTime).toISOString().slice(0, 16) : "",
-                    approximateDuration: data.approximateDuration || 0,
-                    stepsToFollow: data.stepsToFollow || "",
+                    approximateDuration: data.approximateDuration ?? 0,
+                    stepsToFollow: data.stepsToFollow ?? "",
                 })
             } else {
                 toast.error("Ordre de travail non trouvé")

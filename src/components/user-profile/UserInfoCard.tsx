@@ -170,28 +170,28 @@ export default function UserInfoCard({ user }: UserInfoCardProps) {
 
                 <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
                   <div className="col-span-2 lg:col-span-1">
-                    <Label>Prénom</Label>
-                    <InputField type="text" defaultValue="Cabrel" />
+                    <Label>Nom complet</Label>
+                    <InputField type="text" defaultValue={user?.name || ""} />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
-                    <Label>Nom</Label>
-                    <InputField type="text" defaultValue="KEPSEU" />
+                    <Label>Matricule</Label>
+                    <InputField type="text" defaultValue={user?.matricule || ""} />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
                     <Label>Adresse email</Label>
-                    <InputField type="text" defaultValue="cabrel.klc@admin.com" />
+                    <InputField type="text" defaultValue={user?.email || ""} />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
-                    <Label>Téléphone</Label>
-                    <InputField type="text" defaultValue="+237 6XX XXX XXX" />
+                    <Label>Rôle</Label>
+                    <InputField type="text" defaultValue={user?.role || "PERSONNEL"} />
                   </div>
 
                   <div className="col-span-2">
-                    <Label>Biographie</Label>
-                    <InputField type="text" defaultValue="Développeur FullStack" />
+                    <Label>Image de profil</Label>
+                    <InputField type="text" defaultValue={user?.image || ""} placeholder="URL de l'image" />
                   </div>
                 </div>
               </div>

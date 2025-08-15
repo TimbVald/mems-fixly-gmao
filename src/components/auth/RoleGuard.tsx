@@ -29,8 +29,8 @@ const ROLE_PERMISSIONS: Record<Role, string[]> = {
     "/interventions/work-orders",
     "/interventions/work-orders/*", // Accès aux pages de détail des ordres
     "/interventions/reports/add",
-    "/interventions/reports/calendar",
     "/interventions/reports/*", // Accès aux pages de détail des rapports
+    "/stocks"
   ],
   PERSONNEL: [
     "/fiche-chantier",

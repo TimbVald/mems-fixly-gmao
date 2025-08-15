@@ -49,30 +49,60 @@ export default function EquipementEditForm({ equipementId }: EquipementEditFormP
         }
     })
 
+    // useEffect(() => {
+    //     const loadEquipement = async () => {
+    //         const { success, data } = await getEquipementById(equipementId)
+    //         if (success && data) {
+    //             form.reset({
+    //                 name: data.name || "",
+    //                 machineName: data.machineName || "",
+    //                 subAssemblies: data.subAssemblies || "",
+    //                 criticalityIndex: data.criticalityIndex || undefined,
+    //                 plan: data.plan || "",
+    //                 characteristics: data.characteristics || "",
+    //                 technicalFolder: data.technicalFolder || "",
+    //                 failureOccurrence: data.failureOccurrence || undefined,
+    //                 mtbf: data.mtbf || undefined,
+    //                 mttr: data.mttr || undefined,
+    //             })
+    //         } else {
+    //             toast.error("Équipement non trouvé")
+    //             router.push("/equipements")
+    //         }
+    //         setIsLoading(false)
+    //     }
+    //     loadEquipement()
+    // }, [equipementId, form, router])
+
     useEffect(() => {
-        const loadEquipement = async () => {
-            const { success, data } = await getEquipementById(equipementId)
-            if (success && data) {
-                form.reset({
-                    name: data.name || "",
-                    machineName: data.machineName || "",
-                    subAssemblies: data.subAssemblies || "",
-                    criticalityIndex: data.criticalityIndex || undefined,
-                    plan: data.plan || "",
-                    characteristics: data.characteristics || "",
-                    technicalFolder: data.technicalFolder || "",
-                    failureOccurrence: data.failureOccurrence || undefined,
-                    mtbf: data.mtbf || undefined,
-                    mttr: data.mttr || undefined,
-                })
-            } else {
-                toast.error("Équipement non trouvé")
-                router.push("/equipements")
-            }
-            setIsLoading(false)
+    const loadEquipement = async () => {
+        // ... votre code de fetch
+        const { success, data } = await getEquipementById(equipementId);
+        if (success && data) {
+            // La méthode reset met à jour les valeurs du formulaire
+            form.reset({
+                name: data.name ?? "",
+                machineName: data.machineName ?? "",
+                subAssemblies: data.subAssemblies ?? "",
+                criticalityIndex: data.criticalityIndex ?? undefined,
+                plan: data.plan ?? "",
+                characteristics: data.characteristics ?? "",
+                technicalFolder: data.technicalFolder ?? "",
+                failureOccurrence: data.failureOccurrence ?? undefined,
+                mtbf: data.mtbf ?? undefined,
+                mttr: data.mttr ?? undefined,
+            });
+        } else {
+            toast.error("Équipement non trouvé");
+            router.push("/equipements");
         }
-        loadEquipement()
-    }, [equipementId, form, router])
+        setIsLoading(false);
+    };
+
+    if (equipementId) {
+        loadEquipement();
+    }
+}, [equipementId]); // Seule dépendance nécessaire
 
     const onSubmit = (data: z.infer<typeof formSchema>) => {
         startTransition(async () => {

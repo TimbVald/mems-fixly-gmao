@@ -5,30 +5,21 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { toast } from "sonner"
-import { Loader2, EyeIcon, EyeClosedIcon } from "lucide-react"
+import { Loader2, User, Upload, Camera } from "lucide-react"
 
 import { Modal } from "@/components/ui/modal"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import InputField from "@/components/form/input/InputField"
-import Select from "@/components/form/Select"
 import Button from "@/components/ui/button/Button"
 import { updateUser, getUserById } from "@/server/users"
 
 const formSchema = z.object({
-  firstName: z.string().min(2, "Le prénom doit contenir au moins 2 caractères"),
-  lastName: z.string().min(2, "Le nom de famille doit contenir au moins 2 caractères"),
+  name: z.string().min(2, "Le nom complet doit contenir au moins 2 caractères"),
   email: z.string().email("Email invalide"),
-  matricule: z.string().optional(),
-  role: z.string().min(1, "Le rôle est requis"),
-  password: z.string().optional(),
+  image: z.string().optional(),
 })
 
-const roleOptions = [
-  { value: "admin", label: "Administrateur" },
-  { value: "manager", label: "Manager" },
-  { value: "technician", label: "Technicien" },
-  { value: "user", label: "Utilisateur" },
-]
+
 
 interface UserEditModalProps {
   isOpen: boolean
@@ -44,18 +35,16 @@ export default function UserEditModal({
   userId,
 }: UserEditModalProps) {
   const [isLoading, setIsLoading] = useState(true)
-  const [showPassword, setShowPassword] = useState(false)
+
   const [isPending, startTransition] = useTransition()
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
+      name: "",
       email: "",
-      matricule: "",
-      role: "",
-      password: "",
+      image: "",
     },
   })
 
@@ -70,17 +59,12 @@ export default function UserEditModal({
       setIsLoading(true)
       const user = await getUserById(userId)
       if (user) {
-        const [firstName, ...lastNameParts] = user.name.split(' ')
-        const lastName = lastNameParts.join(' ')
-        
         form.reset({
-          firstName: firstName || "",
-          lastName: lastName || "",
-          email: user.email || "",
-          matricule: user.matricule || "",
-          role: user.role || "",
-          password: "",
+          name: user.name ?? "",
+          email: user.email ?? "",
+          image: user.image ?? "",
         })
+        setImagePreview(user.image ?? null)
       }
     } catch (error) {
       console.error("Erreur lors du chargement de l'utilisateur:", error)
@@ -93,17 +77,10 @@ export default function UserEditModal({
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     startTransition(async () => {
       try {
-        const fullName = `${values.firstName} ${values.lastName}`
         const updateData: any = {
-          name: fullName,
+          name: values.name,
           email: values.email,
-          role: values.role,
-          matricule: values.matricule || null,
-        }
-
-        // Only include password if it's provided
-        if (values.password && values.password.trim() !== "") {
-          updateData.password = values.password
+          image: values.image ?? null,
         }
 
         const result = await updateUser(userId, updateData)
@@ -112,7 +89,7 @@ export default function UserEditModal({
           toast.success("Utilisateur modifié avec succès")
           onSuccess()
         } else {
-          toast.error(result.message || "Erreur lors de la modification")
+          toast.error(result.message ?? "Erreur lors de la modification")
         }
       } catch (error) {
         console.error("Erreur lors de la modification:", error)
@@ -121,8 +98,22 @@ export default function UserEditModal({
     })
   }
 
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        const result = reader.result as string
+        setImagePreview(result)
+        form.setValue("image", result)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
   const handleClose = () => {
     form.reset()
+    setImagePreview(null)
     onClose()
   }
 
@@ -151,25 +142,63 @@ export default function UserEditModal({
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                 <FormField
                   control={form.control}
-                  name="firstName"
+                  name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Prénom *</FormLabel>
+                      <FormLabel>Nom complet *</FormLabel>
                       <FormControl>
-                        <InputField placeholder="Entrez le prénom" {...field} />
+                        <div className="relative">
+                          <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                          <InputField 
+                            placeholder="Entrez le nom complet" 
+                            className="pl-10"
+                            {...field} 
+                          />
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+                
+                {/* Photo de profil */}
                 <FormField
                   control={form.control}
-                  name="lastName"
+                  name="image"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Nom de famille *</FormLabel>
+                      <FormLabel>Photo de profil</FormLabel>
                       <FormControl>
-                        <InputField placeholder="Entrez le nom de famille" {...field} />
+                        <div className="flex flex-col items-center space-y-4">
+                          {/* Aperçu de l'image */}
+                          <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-gray-200 dark:border-gray-700">
+                            {imagePreview ? (
+                              <img 
+                                src={imagePreview} 
+                                alt="Aperçu" 
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                                <Camera className="w-8 h-8 text-gray-400" />
+                              </div>
+                            )}
+                          </div>
+                          
+                          {/* Bouton d'upload */}
+                          <label className="cursor-pointer">
+                            <div className="flex items-center space-x-2 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                              <Upload className="w-4 h-4" />
+                              <span className="text-sm">Choisir une image</span>
+                            </div>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={handleImageChange}
+                              className="hidden"
+                            />
+                          </label>
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -183,54 +212,14 @@ export default function UserEditModal({
               <h5 className="text-md font-medium text-gray-700 dark:text-white/80 mb-4">
                 Informations de contact
               </h5>
-              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email *</FormLabel>
-                      <FormControl>
-                        <InputField placeholder="Entrez l'adresse email" type="email" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="matricule"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Matricule</FormLabel>
-                      <FormControl>
-                        <InputField placeholder="MAT001" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </div>
-
-            {/* Informations professionnelles */}
-            <div className="mb-6">
-              <h5 className="text-md font-medium text-gray-700 dark:text-white/80 mb-4">
-                Informations professionnelles
-              </h5>
               <FormField
                 control={form.control}
-                name="role"
+                name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Rôle *</FormLabel>
+                    <FormLabel>Email *</FormLabel>
                     <FormControl>
-                      <Select
-                        options={roleOptions}
-                        placeholder="Sélectionnez un rôle"
-                        defaultValue={field.value}
-                        onChange={field.onChange}
-                      />
+                      <InputField placeholder="Entrez l'adresse email" type="email" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -238,42 +227,7 @@ export default function UserEditModal({
               />
             </div>
 
-            {/* Sécurité */}
-            <div className="mb-6">
-              <h5 className="text-md font-medium text-gray-700 dark:text-white/80 mb-4">
-                Sécurité
-              </h5>
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Nouveau mot de passe (optionnel)</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <InputField
-                          placeholder="Laissez vide pour conserver le mot de passe actuel"
-                          type={showPassword ? "text" : "password"}
-                          {...field}
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                        >
-                          {showPassword ? (
-                            <EyeClosedIcon className="w-4 h-4" />
-                          ) : (
-                            <EyeIcon className="w-4 h-4" />
-                          )}
-                        </button>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+
 
             <div className="flex items-center justify-end w-full gap-3 mt-6">
               <Button 

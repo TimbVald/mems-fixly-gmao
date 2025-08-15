@@ -11,17 +11,34 @@ import {
 } from "@/db/schema";
 import type { Role } from "@/db/types";
 import ForgotPasswordEmail from "@/components/emails/reset-password";
+import VerificationEmail from "@/components/emails/verify-email";
+import { Session } from "./auth-client";
 
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const auth = betterAuth({
     secret: process.env.BETTER_AUTH_SECRET!,
+    emailVerification: {
+        enabled: true,
+        sendVerificationEmail: async ({user, url}) => {
+            await resend.emails.send({
+               from: "onboarding@resend.dev",
+               to: user.email!,
+               subject: "Vérification d'email",
+               react: VerificationEmail({
+                   userName: user.name!, createdAt: user.createdAt, verificationUrl: url,
+                   userEmail: user.email!,
+               }),
+           });
+         },
+    },
+
     emailAndPassword: {
         enabled: true,
         sendResetPassword: async ({user, url}, request) => {
             await resend.emails.send({
-               from: "CabrelKL@resend.dev",
+               from: "onboarding@resend.dev",
                to: user.email,
                subject: "Réinitialisation de mot de passe",
                react: ForgotPasswordEmail({ userName: user.name, userEmail: user.email, resetUrl: url }),
