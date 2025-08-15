@@ -129,7 +129,7 @@ export default function UserEditModal({
         </div>
       ) : (
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="max-w-4xl mx-auto">
             <h4 className="mb-6 text-lg font-medium text-gray-800 dark:text-white/90">
               Modifier l'utilisateur
             </h4>

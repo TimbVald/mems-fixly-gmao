@@ -1,3 +1,5 @@
+"use client";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -7,74 +9,87 @@ import {
 } from "../ui/table";
 import Badge from "../ui/badge/Badge";
 import Image from "next/image";
+import { getDashboardStats } from "@/server/dashboard-stats";
 
 // Define the TypeScript interface for the table rows
 interface Intervention {
-  id: number; // Unique identifier for each intervention
-  equipment: string; // Equipment name
-  type: string; // Type of intervention (e.g., "Maintenance préventive", "Réparation")
-  site: string; // Site where the intervention takes place
-  technician: string; // Technician assigned
-  priority: "Urgent" | "Normal" | "Faible"; // Priority level
-  status: "En cours" | "Terminé" | "En attente"; // Status of the intervention
-  image: string; // URL or path to the equipment image
+  id: string;
+  reportNumber: string;
+  equipmentName: string;
+  interventionType: string;
+  failureType: string;
+  createdAt: Date;
+  technicianName: string;
+  repairTime: number;
 }
 
-// Define the table data using the interface
-const tableData: Intervention[] = [
+// Fonction pour obtenir le statut basé sur le type d'intervention
+const getInterventionStatus = (type: string) => {
+  return type === "préventive" ? "Terminé" : "En cours";
+};
+
+// Fonction pour obtenir la priorité basée sur le temps de réparation
+const getInterventionPriority = (repairTime: number | null | undefined) => {
+  if (!repairTime || typeof repairTime !== 'number') {
+    return "secondary";
+  }
+  if (repairTime > 240) {
+    return "error"; // Urgent
+  }
+  if (repairTime > 120) {
+    return "warning"; // Normal
+  }
+  return "secondary"; // Faible
+};
+
+// Données statiques de fallback (gardées pour compatibilité)
+const fallbackData: Intervention[] = [
   {
-    id: 1,
-    equipment: "Compresseur d'air Atlas Copco",
-    type: "Maintenance préventive",
-    site: "Atelier Production",
-    technician: "Jean Dupont",
-    priority: "Normal",
-    status: "Terminé",
-    image: "/images/product/product-01.jpg", // Replace with actual equipment image
+    id: "1",
+    reportNumber: "RPT-001",
+    equipmentName: "Compresseur d'air Atlas Copco",
+    interventionType: "préventive",
+    failureType: "Maintenance programmée",
+    createdAt: new Date(),
+    technicianName: "Jean Dupont",
+    repairTime: 120,
   },
   {
-    id: 2,
-    equipment: "Pompe hydraulique Parker",
-    type: "Réparation",
-    site: "Zone Technique",
-    technician: "Marie Martin",
-    priority: "Urgent",
-    status: "En cours",
-    image: "/images/product/product-02.jpg", // Replace with actual equipment image
-  },
-  {
-    id: 3,
-    equipment: "Moteur électrique Siemens",
-    type: "Maintenance préventive",
-    site: "Salle des machines",
-    technician: "Pierre Durand",
-    priority: "Faible",
-    status: "En attente",
-    image: "/images/product/product-03.jpg", // Replace with actual equipment image
-  },
-  {
-    id: 4,
-    equipment: "Ventilateur industriel",
-    type: "Réparation",
-    site: "Zone Ventilation",
-    technician: "Sophie Bernard",
-    priority: "Urgent",
-    status: "En cours",
-    image: "/images/product/product-04.jpg", // Replace with actual equipment image
-  },
-  {
-    id: 5,
-    equipment: "Système de refroidissement",
-    type: "Maintenance préventive",
-    site: "Salle climatisation",
-    technician: "Lucas Moreau",
-    priority: "Normal",
-    status: "Terminé",
-    image: "/images/product/product-05.jpg", // Replace with actual equipment image
+    id: "2",
+    reportNumber: "RPT-002",
+    equipmentName: "Pompe hydraulique Parker",
+    interventionType: "curative",
+    failureType: "Panne critique hydraulique",
+    createdAt: new Date(),
+    technicianName: "Marie Martin",
+    repairTime: 180,
   },
 ];
 
 export default function RecentInterventions() {
+  const [interventions, setInterventions] = useState<Intervention[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchInterventions = async () => {
+      try {
+        const result = await getDashboardStats();
+        if (result.success && result.data) {
+          setInterventions(result.data.recentInterventions);
+        } else {
+          // Utiliser les données de fallback en cas d'erreur
+          setInterventions(fallbackData);
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des interventions:', error);
+        setInterventions(fallbackData);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInterventions();
+  }, []);
   return (
     <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6">
       <div className="flex flex-col gap-2 mb-4 sm:flex-row sm:items-center sm:justify-between">
@@ -167,67 +182,79 @@ export default function RecentInterventions() {
           </TableHeader>
 
           {/* Table Body */}
-
           <TableBody className="divide-y divide-gray-100 dark:divide-gray-800">
-            {tableData.map((intervention) => (
-              <TableRow key={intervention.id} className="">
-                <TableCell className="py-3">
-                  <div className="flex items-center gap-3">
-                    <div className="h-[50px] w-[50px] overflow-hidden rounded-md">
-                      <Image
-                        width={50}
-                        height={50}
-                        src={intervention.image}
-                        className="h-[50px] w-[50px]"
-                        alt={intervention.equipment}
-                      />
+            {loading ? (
+              // État de chargement
+              Array.from({ length: 3 }).map((_, index) => (
+                <TableRow key={index}>
+                  <TableCell className="py-3">
+                    <div className="flex items-center gap-3">
+                      <div className="h-[50px] w-[50px] bg-gray-200 rounded-md animate-pulse dark:bg-gray-700"></div>
+                      <div>
+                        <div className="h-4 bg-gray-200 rounded w-32 mb-2 animate-pulse dark:bg-gray-700"></div>
+                        <div className="h-3 bg-gray-200 rounded w-24 animate-pulse dark:bg-gray-700"></div>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-medium text-gray-800 text-theme-sm dark:text-white/90">
-                        {intervention.equipment}
-                      </p>
-                      <span className="text-gray-500 text-theme-xs dark:text-gray-400">
-                        {intervention.site}
-                      </span>
+                  </TableCell>
+                  <TableCell className="py-3">
+                    <div className="h-4 bg-gray-200 rounded w-20 animate-pulse dark:bg-gray-700"></div>
+                  </TableCell>
+                  <TableCell className="py-3">
+                    <div className="h-4 bg-gray-200 rounded w-24 animate-pulse dark:bg-gray-700"></div>
+                  </TableCell>
+                  <TableCell className="py-3">
+                    <div className="h-6 bg-gray-200 rounded w-16 animate-pulse dark:bg-gray-700"></div>
+                  </TableCell>
+                  <TableCell className="py-3">
+                    <div className="h-6 bg-gray-200 rounded w-16 animate-pulse dark:bg-gray-700"></div>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              interventions.map((intervention) => (
+                <TableRow key={intervention.id} className="">
+                  <TableCell className="py-3">
+                    <div className="flex items-center gap-3">
+                      <div className="h-[50px] w-[50px] overflow-hidden rounded-md bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                        <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-800 text-theme-sm dark:text-white/90">
+                          {intervention.equipmentName}
+                        </p>
+                        <span className="text-gray-500 text-theme-xs dark:text-gray-400">
+                          {intervention.reportNumber}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                </TableCell>
-                <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                  {intervention.type}
-                </TableCell>
-                <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                  {intervention.technician}
-                </TableCell>
-                <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                  <Badge
-                    size="sm"
-                    color={
-                      intervention.priority === "Urgent"
-                        ? "error"
-                        : intervention.priority === "Normal"
-                        ? "warning"
-                        : "success"
-                    }
-                  >
-                    {intervention.priority}
-                  </Badge>
-                </TableCell>
-                <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                  <Badge
-                    size="sm"
-                    color={
-                      intervention.status === "Terminé"
-                        ? "success"
-                        : intervention.status === "En cours"
-                        ? "warning"
-                        : "error"
-                    }
-                  >
-                    {intervention.status}
-                  </Badge>
-                </TableCell>
-              </TableRow>
-            ))}
+                  </TableCell>
+                  <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                    {intervention.interventionType === 'préventive' ? 'Maintenance préventive' : 'Réparation'}
+                  </TableCell>
+                  <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                    {intervention.technicianName}
+                  </TableCell>
+                  <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                    <Badge
+                      size="sm"
+                      color={getInterventionPriority(intervention.repairTime)}
+                    >
+                      {intervention.repairTime > 240 ? 'Urgent' : intervention.repairTime > 120 ? 'Normal' : 'Faible'}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                    <Badge
+                      size="sm"
+                      color={getInterventionStatus(intervention.createdAt)}
+                    >
+                      {new Date().getTime() - intervention.createdAt.getTime() > 86400000 ? 'Terminé' : 'En cours'}
+                    </Badge>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </div>

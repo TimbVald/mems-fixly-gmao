@@ -96,7 +96,8 @@ export default function WorkOrderEditForm({ workOrderId }: WorkOrderEditFormProp
 
     return (
         <ComponentCard title="Modifier l'ordre de travail">
-            <div className="flex flex-col flex-1 items-center justify-center lg:w-1/2 w-full overflow-y-auto no-scrollbar">
+            <div className="flex flex-col flex-1 items-center justify-center w-full overflow-y-auto no-scrollbar">
+                <div className="w-full max-w-4xl mx-auto px-4">
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
@@ -236,6 +237,7 @@ export default function WorkOrderEditForm({ workOrderId }: WorkOrderEditFormProp
                         </div>
                     </form>
                 </Form>
+                </div>
             </div>
         </ComponentCard>
     )

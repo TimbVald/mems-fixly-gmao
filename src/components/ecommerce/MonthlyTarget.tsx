@@ -5,15 +5,58 @@ import { ApexOptions } from "apexcharts";
 import dynamic from "next/dynamic";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { MoreDotIcon } from "@/icons";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
+import { getDashboardMetrics } from "@/server/dashboard-stats";
+
+interface MonthlyTargetData {
+  target: number;
+  completed: number;
+  today: number;
+  percentage: number;
+}
 // Dynamically import the ReactApexChart component
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
 });
 
 export default function MonthlyTarget() {
-  const series = [82.5];
+  const [targetData, setTargetData] = useState<MonthlyTargetData>({
+    target: 200,
+    completed: 165,
+    today: 8,
+    percentage: 82.5
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTargetData = async () => {
+      try {
+        const result = await getDashboardMetrics();
+        if (result.success && result.data) {
+          const { monthlyInterventions } = result.data;
+          const target = 200; // Objectif fixe pour le mois
+          const percentage = Math.min((monthlyInterventions / target) * 100, 100);
+          
+          setTargetData({
+            target,
+            completed: monthlyInterventions,
+            today: Math.floor(monthlyInterventions / 30), // Estimation basée sur la moyenne mensuelle
+            percentage: Math.round(percentage * 10) / 10
+          });
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des données d\'objectif:', error);
+        // Garder les valeurs par défaut en cas d'erreur
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTargetData();
+  }, []);
+
+  const series = [targetData.percentage];
   const options: ApexOptions = {
     colors: ["#465FFF"],
     chart: {
@@ -125,7 +168,11 @@ export default function MonthlyTarget() {
           </span>
         </div>
         <p className="mx-auto mt-10 w-full max-w-[380px] text-center text-sm text-gray-500 sm:text-base">
-          Vous avez terminé 165 interventions ce mois, c&apos;est mieux que le mois dernier. Continuez votre excellent travail !
+          {loading ? (
+            <span className="inline-block h-4 bg-gray-200 rounded animate-pulse w-80 dark:bg-gray-700"></span>
+          ) : (
+            `Vous avez terminé ${targetData.completed} interventions ce mois, c'est ${targetData.percentage >= 82.5 ? 'mieux' : 'moins bien'} que le mois dernier. ${targetData.percentage >= 100 ? 'Objectif atteint !' : 'Continuez votre excellent travail !'}`
+          )}
         </p>
       </div>
 
@@ -135,7 +182,11 @@ export default function MonthlyTarget() {
             Objectif
           </p>
           <p className="flex items-center justify-center gap-1 text-base font-semibold text-gray-800 dark:text-white/90 sm:text-lg">
-            200
+            {loading ? (
+              <span className="inline-block h-5 bg-gray-200 rounded animate-pulse w-12 dark:bg-gray-700"></span>
+            ) : (
+              targetData.target
+            )}
             <svg
               width="16"
               height="16"
@@ -160,7 +211,11 @@ export default function MonthlyTarget() {
             Réalisé
           </p>
           <p className="flex items-center justify-center gap-1 text-base font-semibold text-gray-800 dark:text-white/90 sm:text-lg">
-            165
+            {loading ? (
+              <span className="inline-block h-5 bg-gray-200 rounded animate-pulse w-12 dark:bg-gray-700"></span>
+            ) : (
+              targetData.completed
+            )}
             <svg
               width="16"
               height="16"
@@ -185,7 +240,11 @@ export default function MonthlyTarget() {
             Aujourd&apos;hui
           </p>
           <p className="flex items-center justify-center gap-1 text-base font-semibold text-gray-800 dark:text-white/90 sm:text-lg">
-            8
+            {loading ? (
+              <span className="inline-block h-5 bg-gray-200 rounded animate-pulse w-12 dark:bg-gray-700"></span>
+            ) : (
+              targetData.today
+            )}
             <svg
               width="16"
               height="16"
