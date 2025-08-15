@@ -1,6 +1,6 @@
 "use server";
 import { db } from "@/server/db";
-import { historiqueStock, stocks } from "@/db/schema";
+import { historiqueStock, stocks, users } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { createId } from "@paralleldrive/cuid2";
 import { getCurrentUser } from "@/lib/auth-helpers";
@@ -15,6 +15,7 @@ export interface HistoriqueStock {
   createdAt: Date;
   stockId?: string;
   createdById?: string;
+  createdByName?: string;
 }
 
 export interface CreateHistoriqueStockData {
@@ -65,7 +66,21 @@ export const addHistoriqueStock = async (data: CreateHistoriqueStockData) => {
 
 export const getHistoriqueStock = async () => {
   try {
-    const historique = await db.select().from(historiqueStock).orderBy(desc(historiqueStock.createdAt));
+    const historique = await db.select({
+      id: historiqueStock.id,
+      nom: historiqueStock.nom,
+      quantite: historiqueStock.quantite,
+      fournisseur: historiqueStock.fournisseur,
+      prix: historiqueStock.prix,
+      statut: historiqueStock.statut,
+      createdAt: historiqueStock.createdAt,
+      stockId: historiqueStock.stockId,
+      createdById: historiqueStock.createdById,
+      createdByName: users.name
+    })
+    .from(historiqueStock)
+    .leftJoin(users, eq(historiqueStock.createdById, users.id))
+    .orderBy(desc(historiqueStock.createdAt));
     
     return {
       success: true,

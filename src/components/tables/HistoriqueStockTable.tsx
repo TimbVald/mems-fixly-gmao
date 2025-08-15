@@ -25,6 +25,7 @@ interface HistoriqueStock {
     createdAt: Date;
     stockId: string | null;
     createdById: string | null;
+    createdByName: string | null;
 }
 
 export default function HistoriqueStockTable() {
@@ -109,6 +110,12 @@ export default function HistoriqueStockTable() {
                                 isHeader
                                 className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
                             >
+                                Utilisateur
+                            </TableCell>
+                            <TableCell
+                                isHeader
+                                className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                            >
                                 Date de modification
                             </TableCell>
                         </TableRow>
@@ -154,6 +161,9 @@ export default function HistoriqueStockTable() {
                                         >
                                             {item.statut === 'ajouter' ? 'Ajouté' : 'Retiré'}
                                         </Badge>
+                                    </TableCell>
+                                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                        {item.createdByName || 'Utilisateur inconnu'}
                                     </TableCell>
                                     <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                                         {formatDate(item.createdAt)}
