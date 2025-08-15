@@ -6,13 +6,14 @@ import { eq } from "drizzle-orm";
 // GET - Récupérer une fiche chantier par ID
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const [fiche] = await db
       .select()
       .from(ficheChantier)
-      .where(eq(ficheChantier.id, params.id))
+      .where(eq(ficheChantier.id, id))
       .limit(1);
 
     if (!fiche) {
@@ -35,9 +36,10 @@ export async function GET(
 // PUT - Mettre à jour une fiche chantier
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const body = await request.json();
     const {
       nom,
@@ -56,7 +58,7 @@ export async function PUT(
     const [existingFiche] = await db
       .select()
       .from(ficheChantier)
-      .where(eq(ficheChantier.id, params.id))
+      .where(eq(ficheChantier.id, id))
       .limit(1);
 
     if (!existingFiche) {
@@ -91,7 +93,7 @@ export async function PUT(
     const [updatedFiche] = await db
       .update(ficheChantier)
       .set(updateData)
-      .where(eq(ficheChantier.id, params.id))
+      .where(eq(ficheChantier.id, id))
       .returning();
 
     return NextResponse.json(updatedFiche);
@@ -107,14 +109,15 @@ export async function PUT(
 // DELETE - Supprimer une fiche chantier
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     // Vérifier si la fiche existe
     const [existingFiche] = await db
       .select()
       .from(ficheChantier)
-      .where(eq(ficheChantier.id, params.id))
+      .where(eq(ficheChantier.id, id))
       .limit(1);
 
     if (!existingFiche) {
@@ -126,7 +129,7 @@ export async function DELETE(
 
     await db
       .delete(ficheChantier)
-      .where(eq(ficheChantier.id, params.id));
+      .where(eq(ficheChantier.id, id));
 
     return NextResponse.json(
       { message: "Fiche chantier supprimée avec succès" },
