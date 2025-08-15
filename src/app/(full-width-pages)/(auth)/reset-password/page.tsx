@@ -1,4 +1,4 @@
-import ResetPassword from "@/components/auth/ResetPassword";
+import ResetPasswordWrapper from "@/components/auth/ResetPasswordWrapper";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function ResetPasswordPage() {
-  return <ResetPassword />;
-} 
+  return <ResetPasswordWrapper />;
+}
