@@ -44,11 +44,13 @@ export const addInterventionReport = async (data: InterventionReportCreateInput)
                 createdById: currentUser.id, // Utiliser l'ID de l'utilisateur connecté
             }).returning();
 
-            // 2. Mettre à jour l'équipement si equipmentId est fourni et si c'est une intervention corrective
-            if (data.equipmentId && data.interventionType === 'corrective') {
+            // 2. Mettre à jour l'équipement si equipmentId est fourni
+            if (data.equipmentId) {
                 // Récupérer les données actuelles de l'équipement
                 const currentEquipment = await tx.select({
                     failureOccurrence: equipments.failureOccurrence,
+                    mtbf: equipments.mtbf,
+                    mttr: equipments.mttr,
                     createdAt: equipments.createdAt
                 }).from(equipments).where(eq(equipments.id, data.equipmentId)).limit(1);
 
@@ -57,41 +59,64 @@ export const addInterventionReport = async (data: InterventionReportCreateInput)
                     const currentFailureOccurrence = equipment.failureOccurrence || 0;
                     const newFailureOccurrence = currentFailureOccurrence + 1;
 
-                    // Récupérer la dernière demande d'intervention pour cet équipement
-                    const lastWorkRequest = await tx.select({
+                    // Récupérer toutes les demandes d'intervention précédentes pour cet équipement
+                    const allWorkRequests = await tx.select({
                         createdAt: workRequests.createdAt
                     }).from(workRequests)
                     .where(eq(workRequests.equipmentId, data.equipmentId))
-                    .orderBy(desc(workRequests.createdAt))
-                    .limit(1);
+                    .orderBy(desc(workRequests.createdAt));
 
-                    // Calculer le temps de bon fonctionnement avant la panne
-                    let operatingTimeBeforeFailure = 0;
-                    if (lastWorkRequest.length > 0) {
-                        // Temps entre la dernière demande d'intervention et maintenant (en minutes)
-                        const timeDiff = new Date().getTime() - lastWorkRequest[0].createdAt.getTime();
-                        operatingTimeBeforeFailure = Math.max(0, timeDiff / (1000 * 60)); // Convertir en minutes
+                    // Récupérer tous les rapports d'intervention précédents pour calculer le temps total de réparation
+                    const allInterventionReports = await tx.select({
+                        repairTime: interventionReports.repairTime
+                    }).from(interventionReports)
+                    .where(eq(interventionReports.equipmentId, data.equipmentId));
+
+                    // Calculer le temps total de bon fonctionnement
+                    let totalOperatingTime = 0;
+                    const now = new Date();
+                    
+                    if (allWorkRequests.length > 0) {
+                        // Temps depuis la création de l'équipement jusqu'à la première panne
+                        const firstFailureTime = allWorkRequests[allWorkRequests.length - 1].createdAt.getTime();
+                        const equipmentCreationTime = equipment.createdAt.getTime();
+                        totalOperatingTime += (firstFailureTime - equipmentCreationTime) / (1000 * 60); // en minutes
+                        
+                        // Temps entre chaque panne (temps de bon fonctionnement entre les pannes)
+                        for (let i = allWorkRequests.length - 1; i > 0; i--) {
+                            const currentFailureTime = allWorkRequests[i].createdAt.getTime();
+                            const previousFailureTime = allWorkRequests[i - 1].createdAt.getTime();
+                            totalOperatingTime += (previousFailureTime - currentFailureTime) / (1000 * 60);
+                        }
+                        
+                        // Temps depuis la dernière panne jusqu'à maintenant
+                        const lastFailureTime = allWorkRequests[0].createdAt.getTime();
+                        totalOperatingTime += (now.getTime() - lastFailureTime) / (1000 * 60);
                     } else {
-                        // Si pas de demande précédente, utiliser le temps depuis la création de l'équipement
-                        const timeDiff = new Date().getTime() - equipment.createdAt.getTime();
-                        operatingTimeBeforeFailure = Math.max(0, timeDiff / (1000 * 60)); // Convertir en minutes
+                        // Si pas de panne précédente, utiliser le temps depuis la création de l'équipement
+                        totalOperatingTime = (now.getTime() - equipment.createdAt.getTime()) / (1000 * 60);
                     }
 
-                    // Calculer le nouveau MTBF et MTTR selon les formules de l'image
+                    // Calculer le temps total de réparation (incluant le rapport actuel)
+                    let totalRepairTime = data.repairTime; // Temps de réparation du rapport actuel
+                    allInterventionReports.forEach(report => {
+                        totalRepairTime += report.repairTime || 0;
+                    });
+
+                    // Calculer MTBF et MTTR selon les formules
                     let newMTBF = 0;
                     let newMTTR = 0;
 
                     if (newFailureOccurrence > 0) {
-                        // MTTR = Temps total mis pour la réparation / Nombre d'occurrences
-                        // Pour simplifier, on utilise le repairTime actuel comme base
-                        newMTTR = data.repairTime;
-
+                        // MTTR = Temps total de réparation / Nombre d'occurrences
+                        newMTTR = totalRepairTime / newFailureOccurrence;
+                        
                         if (newFailureOccurrence > 1) {
                             // MTBF = Temps de bon fonctionnement avant la panne / (Nombre d'occurrences - 1)
-                            newMTBF = operatingTimeBeforeFailure / (newFailureOccurrence - 1);
+                            newMTBF = totalOperatingTime / (newFailureOccurrence - 1);
                         } else {
                             // Pour la première occurrence, MTBF = temps de fonctionnement total
-                            newMTBF = operatingTimeBeforeFailure;
+                            newMTBF = totalOperatingTime;
                         }
                     }
 
@@ -99,8 +124,8 @@ export const addInterventionReport = async (data: InterventionReportCreateInput)
                     await tx.update(equipments)
                         .set({
                             failureOccurrence: newFailureOccurrence,
-                            mtbf: Math.max(0, newMTBF),
-                            mttr: Math.max(0, newMTTR),
+                            mtbf: Math.max(0, Math.round(newMTBF * 100) / 100), // Arrondir à 2 décimales
+                            mttr: Math.max(0, Math.round(newMTTR * 100) / 100), // Arrondir à 2 décimales
                             updatedAt: new Date()
                         })
                         .where(eq(equipments.id, data.equipmentId));
