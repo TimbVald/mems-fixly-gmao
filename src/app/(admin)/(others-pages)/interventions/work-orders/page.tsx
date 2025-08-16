@@ -6,9 +6,8 @@ import Link from "next/link";
 import React from "react";
 
 export const metadata: Metadata = {
-  title: "Ordres de Travail | Mem's Fixly",
-  description:
-    "This is Ordres de Travail page for Mem's Fixly",
+  title: "Ordres de Travail | Machine Care",
+  description: "This is Ordres de Travail page for Machine Care",
   // other metadata
 };
 

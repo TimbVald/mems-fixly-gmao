@@ -4,9 +4,8 @@ import { Metadata } from "next";
 import React from "react";
 
 export const metadata: Metadata = {
-  title: "Ajouter une demande d'intervention | Mem's Fixly",
-  description:
-    "This is Ajouter une demande d'intervention page for Mem's Fixly",
+  title: "Ajouter une demande d'intervention | Machine Care",
+  description: "This is Ajouter une demande d'intervention page for Machine Care",
   // other metadata
 };
 

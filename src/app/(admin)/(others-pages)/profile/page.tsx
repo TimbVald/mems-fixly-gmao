@@ -6,8 +6,8 @@ import { Metadata } from "next";
 import React from "react";
 
 export const metadata: Metadata = {
-  title: "Profil | Mem's Fixly",
-  description: "Page de profil de Mem's Fixly",
+  title: "Profil | Machine Care",
+  description: "Page de profil de Machine Care",
 };
 
 export default async function Profile() {

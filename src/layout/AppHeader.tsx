@@ -85,12 +85,12 @@ const AppHeader: React.FC = () => {
 
           <Link href="/" className="lg:hidden">
             <div className="flex items-center space-x-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 shadow-lg">
-                <BoxCubeIcon className="h-4 w-4 text-white" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg overflow-hidden">
+                <img src="/images/logo/logo.jpg" alt="Machine Care Logo" className="h-8 w-8 object-cover" />
               </div>
               <div className="flex flex-col">
                 <span className="text-lg font-bold text-foreground">
-                  Mem's Fixly
+                  Machine Care
                 </span>
                 <span className="-mt-1 text-xs text-muted-foreground">
                   GMAO

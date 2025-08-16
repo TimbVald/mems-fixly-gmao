@@ -8,8 +8,8 @@ import EquipmentMTBFMTTR from "@/components/ecommerce/EquipmentMTBFMTTR";
 
 export const metadata: Metadata = {
   title:
-    "Mem's Fixly - Dashboard",
-  description: "Ceci est le tableau de bord de Mem's Fixly",
+    "Machine Care - Dashboard",
+  description: "Ceci est le tableau de bord de Machine Care",
 };
 
 export default function Ecommerce() {

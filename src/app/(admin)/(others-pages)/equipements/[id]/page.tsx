@@ -3,8 +3,8 @@ import EquipementDetails from "@/components/equipment/EquipementDetails";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Détails de l'équipement | Mem's Fixly",
-    description: "This is Détails de l'équipement page for Mem's Fixly",
+    title: "Détails de l'équipement | Machine Care",
+    description: "This is Détails de l'équipement page for Machine Care",
 };
 
 interface EquipementDetailsPageProps {

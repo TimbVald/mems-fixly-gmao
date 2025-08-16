@@ -3,8 +3,8 @@ import WorkRequestDetails from "@/components/details/WorkRequestDetails";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Détails de la demande d'intervention | Mem's Fixly",
-    description: "This is Détails de la demande d'intervention page for Mem's Fixly",
+    title: "Détails de la demande d'intervention | Machine Care",
+    description: "This is Détails de la demande d'intervention page for Machine Care",
 };
 
 interface WorkRequestDetailsPageProps {

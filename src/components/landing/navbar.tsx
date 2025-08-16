@@ -97,13 +97,13 @@ export default function Navbar() {
               <Link href="/" className="flex items-center space-x-3">
                 <div className="relative">
                   <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 shadow-lg">
-                    <Wrench className="h-5 w-5 text-white" />
+                    <img src="/images/logo/logo.jpg" alt="Machine Care Logo" className="h-5 w-5 object-contain" />
                   </div>
                   <div className="absolute -right-1 -top-1 h-3 w-3 animate-pulse rounded-full bg-green-400"></div>
                 </div>
                 <div className="flex flex-col">
                   <span className="text-lg font-bold text-foreground">
-                    Mem's Fixly
+                    Machine Care
                   </span>
                   <span className="-mt-1 text-xs text-muted-foreground">
                     GMAO Intelligente

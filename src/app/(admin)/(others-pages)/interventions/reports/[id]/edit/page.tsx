@@ -3,8 +3,8 @@ import InterventionReportEditForm from "@/components/forms/InterventionReportEdi
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Modifier un compte rendu d'intervention | Mem's Fixly",
-    description: "This is Modifier un compte rendu d'intervention page for Mem's Fixly",
+    title: "Modifier un compte rendu d'intervention | Machine Care",
+    description: "This is Modifier un compte rendu d'intervention page for Machine Care",
 };
 
 interface EditInterventionReportPageProps {

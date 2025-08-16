@@ -70,7 +70,7 @@ export default function FeatureSteps() {
               Une Solution Complète en Quatre Modules
             </h2>
             <p className="font-geist mt-3 text-foreground/60">
-              Mem's Fixly vous offre tous les outils nécessaires pour une gestion de maintenance 
+              Machine Care vous offre tous les outils nécessaires pour une gestion de maintenance 
               efficace et optimisée, de la planification à l'exécution.
             </p>
           </div>

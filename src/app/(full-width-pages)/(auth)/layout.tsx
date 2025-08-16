@@ -30,7 +30,7 @@ export default function AuthLayout({
                       </svg>
                     </div>
                     <div>
-                      <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Mem's Fixly</h1>
+                      <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Machine Care</h1>
                       <p className="text-sm text-gray-500 dark:text-gray-400">GMAO</p>
                     </div>
                   </div>

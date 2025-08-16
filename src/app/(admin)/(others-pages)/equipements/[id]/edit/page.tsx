@@ -3,8 +3,8 @@ import EquipementEditForm from "@/components/forms/equipment/EquipementEditForm"
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Modifier un équipement | Mem's Fixly",
-    description: "This is Modifier un équipement page for Mem's Fixly",
+    title: "Modifier un équipement | Machine Care",
+    description: "This is Modifier un équipement page for Machine Care",
 };
 
 interface EditEquipementPageProps {

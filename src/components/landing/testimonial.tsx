@@ -88,7 +88,7 @@ const testimonials = [
     img: 'https://randomuser.me/api/portraits/men/22.jpg',
     description: (
       <p>
-        Mem's Fixly a révolutionné notre gestion de maintenance.
+        Machine Care a révolutionné notre gestion de maintenance.
         <Highlight>
           Nous avons réduit nos temps d'arrêt de 40% en un an.
         </Highlight>{' '}
@@ -102,7 +102,7 @@ const testimonials = [
     img: 'https://randomuser.me/api/portraits/women/33.jpg',
     description: (
       <p>
-        J'étais sceptique au début, mais Mem's Fixly m'a convaincue.
+        J'étais sceptique au début, mais Machine Care m'a convaincue.
         <Highlight>
           La gestion des stocks est maintenant optimale et nous évitons les ruptures.
         </Highlight>{' '}
@@ -116,7 +116,7 @@ const testimonials = [
     img: 'https://randomuser.me/api/portraits/men/32.jpg',
     description: (
       <p>
-        Mem's Fixly a transformé notre façon de planifier les interventions.
+        Machine Care a transformé notre façon de planifier les interventions.
         <Highlight>Nous avons amélioré notre productivité de 35%.</Highlight> La
         planification des équipes est maintenant optimale et efficace.
       </p>
@@ -128,7 +128,7 @@ const testimonials = [
     img: 'https://randomuser.me/api/portraits/women/44.jpg',
     description: (
       <p>
-        La traçabilité offerte par Mem's Fixly est exceptionnelle.
+        La traçabilité offerte par Machine Care est exceptionnelle.
         <Highlight>
           Nous respectons parfaitement les normes de conformité.
         </Highlight>{' '}
@@ -144,7 +144,7 @@ const testimonials = [
       <p>
         Notre réseau de centrales électriques nécessitait une solution robuste.
         <Highlight>
-          Mem's Fixly gère parfaitement nos 200+ équipements critiques.
+          Machine Care gère parfaitement nos 200+ équipements critiques.
         </Highlight>{' '}
         La sécurité et la fiabilité sont au rendez-vous.
       </p>
@@ -170,7 +170,7 @@ const testimonials = [
     img: 'https://randomuser.me/api/portraits/men/78.jpg',
     description: (
       <p>
-        Mem's Fixly offre le parfait équilibre entre simplicité et puissance.
+        Machine Care offre le parfait équilibre entre simplicité et puissance.
         <Highlight>
           Nous maintenons nos standards de qualité tout en améliorant l'efficacité.
         </Highlight>{' '}
@@ -184,7 +184,7 @@ const testimonials = [
     img: 'https://randomuser.me/api/portraits/women/89.jpg',
     description: (
       <p>
-        Nos temps d'arrêt ont diminué de 30% depuis l'utilisation de Mem's Fixly.
+        Nos temps d'arrêt ont diminué de 30% depuis l'utilisation de Machine Care.
         <Highlight>
           La planification préventive nous évite les arrêts imprévus.
         </Highlight>{' '}
@@ -198,7 +198,7 @@ const testimonials = [
     img: 'https://randomuser.me/api/portraits/men/92.jpg',
     description: (
       <p>
-        Mem's Fixly respecte parfaitement nos exigences de sécurité.
+        Machine Care respecte parfaitement nos exigences de sécurité.
         <Highlight>
           La traçabilité complète nous rassure lors des audits.
         </Highlight>{' '}
@@ -214,7 +214,7 @@ const testimonials = [
       <p>
         Dans le secteur médical, la fiabilité des équipements est cruciale.
         <Highlight>
-          Mem's Fixly nous garantit une maintenance préventive efficace.
+          Machine Care nous garantit une maintenance préventive efficace.
         </Highlight>{' '}
         La conformité aux normes médicales est parfaitement respectée.
       </p>
@@ -243,7 +243,7 @@ export default function Testimonials() {
             nos clients
           </span>{' '}
           disent de{' '}
-          <span className="font-semibold text-blue-500">Mem's Fixly</span>
+          <span className="font-semibold text-blue-500">Machine Care</span>
         </h3>
       </motion.div>
  

@@ -3,8 +3,8 @@ import WorkOrderDetails from "@/components/details/WorkOrderDetails";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Détails de l'ordre de travail | Mem's Fixly",
-    description: "This is Détails de l'ordre de travail page for Mem's Fixly",
+    title: "Détails de l'ordre de travail | Machine Care",
+    description: "This is Détails de l'ordre de travail page for Machine Care",
 };
 
 interface WorkOrderDetailsPageProps {

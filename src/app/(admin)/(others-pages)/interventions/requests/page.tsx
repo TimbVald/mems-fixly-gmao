@@ -5,9 +5,8 @@ import { Metadata } from "next";
 import React from "react";
 
 export const metadata: Metadata = {
-  title: "Demandes d'Intervention | Mem's Fixly",
-  description:
-    "This is Demandes d'Intervention page for Mem's Fixly",
+  title: "Demandes d'Intervention | Machine Care",
+  description: "This is Demandes d'Intervention page for Machine Care",
   // other metadata
 };
 

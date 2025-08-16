@@ -215,7 +215,7 @@ export default function ContactUs1() {
                 <article className="relative mx-auto h-[350px] min-h-60 max-w-[450px] overflow-hidden rounded-3xl border bg-gradient-to-b from-[#e60a64] to-[#e60a64]/5 p-6 text-3xl tracking-tight text-white md:h-[450px] md:min-h-80 md:p-8 md:text-4xl md:leading-[1.05] lg:text-5xl">
                   <div className="mb-6 flex items-center gap-3">
                     <Wrench className="h-8 w-8" />
-                    <span className="text-2xl font-bold">Mem's Fixly</span>
+                    <span className="text-2xl font-bold">Machine Care</span>
                   </div>
                   <p className="text-lg leading-relaxed">
                     Transformez votre gestion de maintenance avec notre solution complète et moderne.

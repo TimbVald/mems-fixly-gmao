@@ -4,9 +4,8 @@ import { Metadata } from "next";
 import React from "react";
 
 export const metadata: Metadata = {
-  title: "Mem's Fixly - Calendrier",
-  description:
-    "Ceci est la page de calendrier de Mem's Fixly",
+  title: "Machine Care - Calendrier",
+  description: "Ceci est la page de calendrier de Machine Care",
   // other metadata
 };
 export default function page() {

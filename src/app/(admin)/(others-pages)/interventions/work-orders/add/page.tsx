@@ -4,9 +4,8 @@ import { Metadata } from "next";
 import React from "react";
 
 export const metadata: Metadata = {
-  title: "Ajouter un ordre de travail | Mem's Fixly",
-  description:
-    "This is Ajouter un ordre de travail page for Mem's Fixly",
+  title: "Ajouter un ordre de travail | Machine Care",
+  description: "This is Ajouter un ordre de travail page for Machine Care",
   // other metadata
 };
 

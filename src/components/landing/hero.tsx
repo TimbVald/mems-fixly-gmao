@@ -227,7 +227,7 @@ export default function AppHero() {
       <div className="fadein-blur relative z-0 mx-auto mb-10 h-[300px] w-[300px] lg:absolute lg:right-1/2 lg:top-1/2 lg:mx-0 lg:mb-0 lg:h-[500px] lg:w-[500px] lg:-translate-y-2/3 lg:translate-x-1/2">
         <img
           src="https://blocks.mvp-subha.me/Adobe Express - file(1).png"
-          alt="Mem's Fixly GMAO Platform 3D Visualization"
+          alt="Machine Care GMAO Platform 3D Visualization"
           className="h-full w-full object-contain drop-shadow-[0_0_35px_#3358ea85] transition-all duration-1000 hover:scale-110"
         />
         <motion.div
@@ -283,7 +283,7 @@ export default function AppHero() {
               <span className="mr-2 rounded-full bg-purple-500 px-2 py-0.5 text-xs font-semibold text-white">
                 Nouveau
               </span>
-              Découvrez Mem's Fixly
+              Découvrez Machine Care
             </motion.div>
  
             <motion.h1
@@ -353,7 +353,7 @@ export default function AppHero() {
               variants={itemVariants}
               className="mb-8 max-w-md px-6 text-center text-lg leading-relaxed text-slate-300/90 lg:text-end"
             >
-              Mem's Fixly révolutionne la gestion de maintenance avec une plateforme moderne, 
+              Machine Care révolutionne la gestion de maintenance avec une plateforme moderne, 
               sécurisée et intuitive. Gérez vos équipements, interventions, stocks et équipes 
               en toute simplicité.
             </motion.p>

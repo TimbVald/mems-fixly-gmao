@@ -3,8 +3,8 @@ import StockDetails from "@/components/stocks/StockDetails";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Détails de l'article | Mem's Fixly",
-    description: "This is Détails de l'article page for Mem's Fixly",
+    title: "Détails de l'article | Machine Care",
+    description: "This is Détails de l'article page for Machine Care",
 };
 
 interface StockDetailsPageProps {

@@ -13,10 +13,10 @@ export default function Footer() {
           <div className="col-span-2">
             <div className="mb-4 flex items-center justify-start gap-2">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 shadow-lg">
-                <Wrench className="h-4 w-4 text-white" />
+                <img src="/images/logo/logo.jpg" alt="Machine Care Logo" className="h-4 w-4 object-contain" />
               </div>
               <span className="bg-primary from-foreground via-blue-200 to-primary bg-clip-text text-2xl font-semibold text-transparent dark:bg-gradient-to-b">
-                Mem's Fixly
+                Machine Care
               </span>
             </div>
             <p className="mb-4 text-muted-foreground">
@@ -182,7 +182,7 @@ export default function Footer() {
           <div className="flex flex-col items-center justify-between text-sm text-muted-foreground md:flex-row">
             <p>
               ©{new Date().getFullYear()}{' '}
-              <span className="font-medium text-foreground">Mem's Fixly</span>.
+              <span className="font-medium text-foreground">Machine Care</span>.
               Tous droits réservés.
             </p>
             <div className="mt-4 flex items-center space-x-1 md:mt-0">

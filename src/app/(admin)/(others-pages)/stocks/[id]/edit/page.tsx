@@ -3,8 +3,8 @@ import StockEditForm from "@/components/stocks/forms/StockEditForm";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Modifier un article | Mem's Fixly",
-    description: "This is Modifier un article page for Mem's Fixly",
+    title: "Modifier un article | Machine Care",
+    description: "This is Modifier un article page for Machine Care",
 };
 
 interface EditStockPageProps {

@@ -3,8 +3,8 @@ import WorkRequestEditForm from "@/components/forms/WorkRequestEditForm";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Modifier une demande d'intervention | Mem's Fixly",
-    description: "This is Modifier une demande d'intervention page for Mem's Fixly",
+    title: "Modifier une demande d'intervention | Machine Care",
+    description: "This is Modifier une demande d'intervention page for Machine Care",
 };
 
 interface EditWorkRequestPageProps {

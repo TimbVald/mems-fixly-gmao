@@ -5,9 +5,8 @@ import { Metadata } from "next";
 
 
 export const metadata: Metadata = {
-    title: "Ajouter un équipement | Mem's Fixly",
-    description:
-      "This is Ajouter un équipement page for Mem's Fixly",
+    title: "Ajouter un équipement | Machine Care",
+    description: "This is Ajouter un équipement page for Machine Care",
   };
   
   export default function AddEquipementPage() {

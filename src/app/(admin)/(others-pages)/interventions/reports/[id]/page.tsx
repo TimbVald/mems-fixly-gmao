@@ -3,8 +3,8 @@ import InterventionReportDetails from "@/components/details/InterventionReportDe
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Détails du compte rendu d'intervention | Mem's Fixly",
-    description: "This is Détails du compte rendu d'intervention page for Mem's Fixly",
+    title: "Détails du compte rendu d'intervention | Machine Care",
+    description: "This is Détails du compte rendu d'intervention page for Machine Care",
 };
 
 interface InterventionReportDetailsPageProps {

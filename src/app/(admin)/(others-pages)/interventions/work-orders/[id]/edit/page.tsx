@@ -3,8 +3,8 @@ import WorkOrderEditForm from "@/components/forms/WorkOrderEditForm";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Modifier un ordre de travail | Mem's Fixly",
-    description: "This is Modifier un ordre de travail page for Mem's Fixly",
+    title: "Modifier un ordre de travail | Machine Care",
+    description: "This is Modifier un ordre de travail page for Machine Care",
 };
 
 interface EditWorkOrderPageProps {
