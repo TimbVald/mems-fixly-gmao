@@ -1,7 +1,7 @@
 "use server";
 import { db } from "@/server/db";
 import { workRequests, equipments } from "@/db/schema";
-import { eq, sql } from "drizzle-orm";
+import { eq, sql, gte, lte, and } from "drizzle-orm";
 import { createId } from "@paralleldrive/cuid2";
 import { getCurrentUser } from "@/lib/auth-helpers";
 
@@ -143,3 +143,83 @@ export const updateWorkRequest = async (id: string, data: WorkRequestUpdateInput
         }
     }
 }
+
+export const getWorkRequestStatistics = async (year: number = new Date().getFullYear()) => {
+    try {
+        // Créer les dates de début et fin de l'année
+        const startDate = new Date(year, 0, 1); // 1er janvier
+        const endDate = new Date(year, 11, 31, 23, 59, 59); // 31 décembre
+
+        // Récupérer toutes les demandes de travaux de l'année
+        const workRequestsData = await db.select({
+            failureType: workRequests.failureType,
+            createdAt: workRequests.createdAt
+        })
+        .from(workRequests)
+        .where(
+            and(
+                gte(workRequests.createdAt, startDate),
+                lte(workRequests.createdAt, endDate)
+            )
+        );
+
+        // Initialiser les données par mois et type de panne
+        const monthlyStats: { [key: string]: { [month: number]: number } } = {
+            'mécanique': {},
+            'électrique': {},
+            'hydraulique': {}
+        };
+
+        // Initialiser tous les mois à 0
+        for (let month = 0; month < 12; month++) {
+            monthlyStats['mécanique'][month] = 0;
+            monthlyStats['électrique'][month] = 0;
+            monthlyStats['hydraulique'][month] = 0;
+        }
+
+        // Compter les pannes par mois et type
+        workRequestsData.forEach(request => {
+            const month = request.createdAt.getMonth();
+            const failureType = request.failureType.toLowerCase();
+            
+            if (monthlyStats[failureType]) {
+                monthlyStats[failureType][month]++;
+            }
+        });
+
+        // Convertir en format pour le graphique
+        const chartData = {
+            categories: [
+                'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun',
+                'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'
+            ],
+            series: [
+                {
+                    name: 'Pannes Mécaniques',
+                    data: Object.values(monthlyStats['mécanique'])
+                },
+                {
+                    name: 'Pannes Électriques',
+                    data: Object.values(monthlyStats['électrique'])
+                },
+                {
+                    name: 'Pannes Hydrauliques',
+                    data: Object.values(monthlyStats['hydraulique'])
+                }
+            ]
+        };
+
+        return {
+            success: true,
+            message: "Statistiques récupérées avec succès",
+            data: chartData
+        };
+    } catch (error) {
+        console.error(error);
+        const e = error as Error;
+        return {
+            success: false,
+            message: e.message || "Erreur lors de la récupération des statistiques"
+        };
+    }
+};
