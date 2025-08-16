@@ -69,7 +69,7 @@ const FicheChantierPrint = React.forwardRef<HTMLDivElement, FicheChantierPrintPr
             {/* En-tête avec logo et informations entreprise */}
             <div className="text-center mb-6 pb-4 border-b-2 border-gray-800 print:mb-4">
                 <div className="flex items-center justify-center mb-4">
-                    <img src="/images/logo/logo.jpg" alt="Machine Care" className="h-12 w-auto mr-4" />
+                    <img src="/images/logo/logo.jpg" alt="Machine Care" className="h-8 w-auto mr-4 print:h-6" />
                     <div>
                         <h1 className="text-3xl font-bold text-gray-800 print:text-2xl">FICHE DE CHANTIER</h1>
                         <p className="text-sm text-gray-600">Machine Care - Système de gestion de maintenance</p>
