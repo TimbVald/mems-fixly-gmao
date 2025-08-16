@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { addWorkRequest } from "@/server/work-requests"
 import { toast } from "sonner"
-import { useTransition } from "react"
+import { useTransition, useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Form, FormItem, FormControl, FormLabel, FormMessage, FormField } from "@/components/ui/form";
 import InputField from "@/components/form/input/InputField";
@@ -18,6 +18,7 @@ const formSchema = z.object({
     requesterLastName: z.string().min(1, "Le nom du demandeur est requis"),
     requesterFirstName: z.string().min(1, "Le prénom du demandeur est requis"),
     equipmentName: z.string().min(1, "Le nom de l'équipement est requis"),
+    equipmentId: z.string().optional(),
     failureType: z.enum(["mécanique", "électrique"]),
     failureDescription: z.string().min(1, "La description de la panne est requise"),
 })
@@ -27,6 +28,33 @@ type FormValues = z.infer<typeof formSchema>;
 export default function WorkRequestForm() {
     const [isPending, startTransition] = useTransition()
     const router = useRouter()
+    const [equipments, setEquipments] = useState<Array<{id: string, name: string}>>([])
+    
+    // Charger les équipements au montage du composant
+    useEffect(() => {
+        const loadEquipments = async () => {
+            try {
+                const { getEquipements } = await import("@/server/equipement")
+                const result = await getEquipements()
+                if (result.success && result.data) {
+                    setEquipments(result.data)
+                }
+            } catch (error) {
+                console.error("Erreur lors du chargement des équipements:", error)
+            }
+        }
+        loadEquipments()
+     }, [])
+     
+     // Fonction pour gérer la sélection d'équipement
+     const handleEquipmentChange = (equipmentId: string) => {
+         const selectedEquipment = equipments.find(eq => eq.id === equipmentId)
+         if (selectedEquipment) {
+             form.setValue('equipmentId', equipmentId)
+             form.setValue('equipmentName', selectedEquipment.name)
+         }
+     }
+     
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -34,6 +62,7 @@ export default function WorkRequestForm() {
             requesterLastName: "",
             requesterFirstName: "",
             equipmentName: "",
+            equipmentId: "",
             failureType: "mécanique",
             failureDescription: "",
         },
@@ -84,8 +113,8 @@ export default function WorkRequestForm() {
                                                 <DynamicSelect 
                                                     dataSource="equipments"
                                                     placeholder="Sélectionnez un équipement"
-                                                    onChange={field.onChange}
-                                                    value={field.value}
+                                                    onChange={handleEquipmentChange}
+                                                    value={form.watch('equipmentId')}
                                                 />
                                             </FormControl>
                                             <FormMessage />

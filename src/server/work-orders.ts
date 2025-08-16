@@ -1,6 +1,6 @@
 "use server";
 import { db } from "@/server/db";
-import { workOrders } from "@/db/schema";
+import { workOrders, workRequests } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { createId } from "@paralleldrive/cuid2";
 
@@ -19,15 +19,29 @@ type WorkOrderUpdateInput = Partial<WorkOrderCreateInput>;
 
 export const addWorkOrder = async (data: WorkOrderCreateInput) => {
     try {
-        const workOrder = await db.insert(workOrders).values({
-            id: createId(),
-            ...data,
-        }).returning();
+        // Utiliser une transaction pour s'assurer que les deux opérations réussissent
+        const result = await db.transaction(async (tx) => {
+            // 1. Créer l'ordre de travail
+            const workOrder = await tx.insert(workOrders).values({
+                id: createId(),
+                ...data,
+            }).returning();
+
+            // 2. Mettre à jour le statut workOrderAssigned de la demande d'intervention
+            await tx.update(workRequests)
+                .set({
+                    workOrderAssigned: true,
+                    updatedAt: new Date()
+                })
+                .where(eq(workRequests.requestNumber, data.workRequestNumber));
+
+            return workOrder[0];
+        });
         
         return {
             success: true,
-            message: "Ordre de travail ajouté avec succès",
-            data: workOrder[0]
+            message: "Ordre de travail ajouté avec succès et statut de la demande mis à jour",
+            data: result
         }
     } catch (error) {
         console.error(error)

@@ -1,6 +1,6 @@
 "use server";
 import { db } from "@/server/db";
-import { interventionReports, equipments, workRequests } from "@/db/schema";
+import { interventionReports, equipments, workRequests, workOrders } from "@/db/schema";
 import { eq, sql, desc } from "drizzle-orm";
 import { createId } from "@paralleldrive/cuid2";
 import { getCurrentUser } from "@/lib/auth-helpers";
@@ -104,6 +104,34 @@ export const addInterventionReport = async (data: InterventionReportCreateInput)
                             updatedAt: new Date()
                         })
                         .where(eq(equipments.id, data.equipmentId));
+                }
+            }
+
+            // 3. Mettre à jour le statut reportCompleted de l'ordre de travail et de la demande d'intervention
+            if (data.workOrderNumber) {
+                // Mettre à jour l'ordre de travail
+                await tx.update(workOrders)
+                    .set({
+                        reportCompleted: true,
+                        updatedAt: new Date()
+                    })
+                    .where(eq(workOrders.workOrderNumber, data.workOrderNumber));
+
+                // Récupérer l'ordre de travail pour obtenir le workRequestNumber
+                const workOrder = await tx.select({
+                    workRequestNumber: workOrders.workRequestNumber
+                }).from(workOrders)
+                .where(eq(workOrders.workOrderNumber, data.workOrderNumber))
+                .limit(1);
+
+                if (workOrder.length > 0) {
+                    // Mettre à jour la demande d'intervention
+                    await tx.update(workRequests)
+                        .set({
+                            reportCompleted: true,
+                            updatedAt: new Date()
+                        })
+                        .where(eq(workRequests.requestNumber, workOrder[0].workRequestNumber));
                 }
             }
 

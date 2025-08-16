@@ -119,6 +119,8 @@ export const workOrders = pgTable('work_orders', {
   approximateDuration: integer('approximateDuration'), // en minutes
   // Démarche
   stepsToFollow: text('stepsToFollow').notNull(),
+  // Statut du rapport
+  reportCompleted: boolean('reportCompleted').notNull().default(false),
   createdAt: timestamp('createdAt').notNull().defaultNow(),
   updatedAt: timestamp('updatedAt').notNull().defaultNow(),
   createdById: text('createdById').notNull().references(() => users.id),

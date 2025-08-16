@@ -11,6 +11,9 @@
 setup-db.js
 userinput.py
 
+drizzle
+migrations
+
 
 # env
 .env
