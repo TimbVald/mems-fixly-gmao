@@ -14,6 +14,8 @@ import { Loader2 } from "lucide-react";
 import ComponentCard from "../common/ComponentCard";
 import { toast } from "sonner";
 import { getHistoriqueStock } from "@/server/historique-stock";
+import PrintButton from "../print/PrintButton";
+import HistoriqueStockPrint from "../print/HistoriqueStockPrint";
 
 interface HistoriqueStock {
     id: string;
@@ -71,7 +73,18 @@ export default function HistoriqueStockTable() {
     };
 
     return (
-        <ComponentCard title="Historique des modifications de stock">
+        <ComponentCard 
+            title="Historique des modifications de stock"
+            headerActions={
+                <PrintButton 
+                    documentName="Historique_Stock"
+                    variant="outline"
+                    size="sm"
+                >
+                    <HistoriqueStockPrint historiqueStock={historiqueStock} />
+                </PrintButton>
+            }
+        >
             <div className="overflow-x-auto">
                 <Table>
                     <TableHeader className="bg-gray-50 dark:bg-white/[0.02]">
